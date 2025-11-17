@@ -1,0 +1,15 @@
+{
+  "urls": [
+    ["4.1_task.py", "http://localhost:8000/week_4/4.1_task.py"],
+    ["hr_capture02_250Hz.txt", "http://localhost:8000/week_4/hr_capture02_250Hz.txt"],
+    ["lib/filefifo.py", "http://localhost:8000/pico-lib/filefifo.py"],	
+    ["lib/fifo.py", "http://localhost:8000/pico-lib/fifo.py"],
+    ["lib/piotimer.py", "http://localhost:8000/pico-lib/piotimer.py"],
+    ["lib/led.py", "http://localhost:8000/pico-lib/led.py"],
+    ["lib/ssd1306.mpy", "http://localhost:8000/pico-lib/ssd1306.mpy"],
+    ["lib/umqtt/simple.mpy", "http://localhost:8000/pico-lib/umqtt/simple.mpy"]
+  ],
+  "deps": [
+  ],
+  "version": "0.1"
+}
