@@ -85,7 +85,6 @@ class App:
                 step = self.encoder.fifo.get()
                 
                 if self.screen == "menu":
-                    print(step, self.screen)
                     
                     if step == 1 or step == -1:
                         self.menu.move(step)
