@@ -11,8 +11,10 @@ micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
 
 
 ########## OLED ###################################
+oled_width = 128
+oled_height = 64
 i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
-oled = SSD1306_I2C(128, 64, i2c)
+oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
 
 
@@ -21,11 +23,18 @@ class Sensor:
     def __init__(self):
         self.sensor = ADC(Pin(26, Pin.IN)) # sensor (ADC_0 connector)
         self.fifo = Fifo(size=50, typecode = 'i')
-        self.timer = Piotimer(freq=config["sampling_rate_hz"], callback=self.callback) # frequency configured in config.json
+        self.timer = None
+
+    def start(self):
+        Piotimer(freq=config["sampling_rate_hz"], callback=self.callback) # frequency configured in config.json
+    
+    def stop(self):
+        if self.timer:
+            self.timer.deinit()
+            self.timer = None
 
     def callback(self, timer):
         self.fifo.put(self.sensor.read_u16())
-
 
 
 ########## ENCODER ################################

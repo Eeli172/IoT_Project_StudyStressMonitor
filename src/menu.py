@@ -69,11 +69,20 @@ class App:
         
     def show_measure_hr_screen(self):
         self.oled.fill(0)
-        self.oled.text("      START", 0, 15)
-        self.oled.text("   MESAUREMENT", 0, 25)
-        self.oled.text("   BY PRESSING", 0, 35)
-        self.oled.text("      BUTTON", 0, 45)
-#         self.oled.text("TO START", 0, 50)
+
+        text_list = ["START","MESAUREMENT","BY PRESSING","BUTTON"] # list of rows
+
+        y = int((hardware.oled_height - 10*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
+        for row in text_list:
+            x = int((hardware.oled_width - 8*len(row))/2) # center vertically
+            self.oled.text(row, x, y) 
+            y += 10 # next row +10px 
+
+        # self.oled.text("      START", 0, 15)
+        # self.oled.text("   MESAUREMENT", 0, 25)
+        # self.oled.text("   BY PRESSING", 0, 35)
+        # self.oled.text("      BUTTON", 0, 45)
+        # self.oled.text("TO START", 0, 50)
         self.oled.show()
 
     def run(self):
