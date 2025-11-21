@@ -1,5 +1,4 @@
-from oled_menu import App
-
+import menu
 
 if __name__ == "__main__":
-    App.run()    
+    menu.App().run()    
