@@ -1,7 +1,11 @@
 {
   "urls": [
     ["main.py", "http://localhost:8000/src/main.py"],
-    ["oled_menu.py", "http://localhost:8000/src/oled_menu.py"],
+    ["menu.py", "http://localhost:8000/src/menu.py"],
+    ["hardware.py", "http://localhost:8000/src/hardware.py"],
+    ["config.py", "http://localhost:8000/src/config.py"],
+    ["config.json", "http://localhost:8000/src/config.json"],
+    
     ["lib/filefifo.py", "http://localhost:8000/lib/filefifo.py"],	
     ["lib/fifo.py", "http://localhost:8000/lib/fifo.py"],
     ["lib/piotimer.py", "http://localhost:8000/lib/piotimer.py"],

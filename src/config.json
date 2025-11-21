@@ -1,1 +1,25 @@
-"settings (Examples: sampling rate, Wi-Fi credentials, file limits, thresholds, debug mode, MQTT topics, Kubios on/off.)"
+{
+    "sampling_rate_hz": 250,
+
+    "threshold": {
+        "max": 30,
+        "min": 240,
+        "avg": 0
+    },
+    
+    "wifi": {
+        "ssid": "KME751_Group_4",
+        "password": "Projectgroup4"
+    },
+    
+    "mqtt": {
+        "broker": "192.168.4.253",
+        "port": 21883,
+        "topic_publish": "XXX",
+        "topic_command": "XXX"
+    },
+    
+    "debug": false,
+
+    "kubios_enabled": false
+}

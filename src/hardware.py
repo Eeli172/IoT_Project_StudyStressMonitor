@@ -1,7 +1,8 @@
-# sensor, OLED, encoder, timers (optional)
-from machine import Pin, I2C
+from machine import Pin, I2C, ADC
 from ssd1306 import SSD1306_I2C
+from piotimer import Piotimer
 from fifo import Fifo
+from config import config
 import time
 import micropython
 
@@ -14,7 +15,16 @@ i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
 oled = SSD1306_I2C(128, 64, i2c)
 
 
+
 ########## SENSOR #################################
+class Sensor:
+    def __init__(self):
+        self.sensor = ADC(Pin(26, Pin.IN)) # sensor (ADC_0 connector)
+        self.fifo = Fifo(size=50, typecode = 'i')
+        self.timer = Piotimer(freq=config["sampling_rate_hz"], callback=self.callback) # frequency configured in config.json
+
+    def callback(self, timer):
+        self.fifo.put(self.sensor.read_u16())
 
 
 
