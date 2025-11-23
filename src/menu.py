@@ -57,7 +57,7 @@ class App:
                     elif step == 0:
                         if self.menu.index == 0:
                             self.screen = "measure_hr"
-                            view.display_center(["START","MESAUREMENT","BY PRESSING","BUTTON"])
+                            view.display_center(["START","MEASUREMENT","BY PRESSING","BUTTON"])
                         
                     elif self.screen == "measure_hr":
                         if step == 0:
