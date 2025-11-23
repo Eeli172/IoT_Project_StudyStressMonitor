@@ -12,13 +12,14 @@ class Menu:
         self.index = 0
 
     def draw(self):
-        view.draw_menu(self.index, self.items)
+        index = self.index // 2 
+        view.draw_menu(index, self.items)
 
     def move(self, step):
         self.index += step
         if self.index < 0:
-            self.index = len(self.items) - 1
-        if self.index >= len(self.items):
+            self.index = len(self.items)*2 - 1
+        if self.index >= len(self.items)*2:
             self.index = 0
 
 
@@ -48,8 +49,9 @@ class App:
                 
                 if self.screen == "menu":
                     
-                    if step == 1 or step == -1:
+                    if step != 0:
                         self.menu.move(step)
+
                         self.menu.draw()
                         
                     elif step == 0:
