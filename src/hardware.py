@@ -47,14 +47,14 @@ class Encoder:
         self.fifo = Fifo(30, typecode='i')        # FIFO for +1 / -1 steps
         self.last_press = 0
 
-        self.a.irq(handler=self.handler, trigger=Pin.IRQ_FALLING, hard=True)
+        self.a.irq(handler=self.handler, trigger=Pin.IRQ_RISING, hard=True)
         self.button.irq(handler=self._button_handler, trigger=Pin.IRQ_FALLING, hard=True)
 
     def handler(self, pin):
         if self.b():                 # If B == 1
-            self.fifo.put(1)         # One direction
+            self.fifo.put(-1)         # One direction
         else:                        # If B == 0
-            self.fifo.put(-1)        # Other direction
+            self.fifo.put(1)        # Other direction
             
     def _button_handler(self, pin):
         now = time.ticks_ms()
@@ -65,4 +65,12 @@ class Encoder:
         
         self.fifo.put(0)
 
+if __name__ == "__main__":
+    encoder = Encoder()
 
+    
+    while True:
+        while encoder.fifo.has_data():
+
+            step = encoder.fifo.get()
+            print(step)
