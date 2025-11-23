@@ -61,10 +61,11 @@ class App:
                             self.screen = "measure_hr"
                             view.display_center(["START","MEASUREMENT","BY PRESSING","BUTTON"])
                         
-                    elif self.screen == "measure_hr":
-                        if step == 0:
-                            self.screen = "menu"
-                            self.menu.draw()
+                elif self.screen == "measure_hr":
+                    if step == 0:
+                        self.screen = "mesaure_hr_run"
+                        self.oled.fill(0)
+                        self.oled.show()
                     
                    #elif self.screen == ""
                     
