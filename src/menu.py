@@ -1,5 +1,6 @@
 import hardware
 import micropython
+import view
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
 
@@ -11,33 +12,7 @@ class Menu:
         self.index = 0
 
     def draw(self):
-        self.oled.fill(0)
-
-        # 1. MEASURE HR
-        if self.index == 0:
-            self.oled.text(">" + self.items[0], 0, 10)
-        else:
-            self.oled.text(" " + self.items[0], 0, 10)
-
-        # 2. BASIC HRV 
-        if self.index == 1:
-            self.oled.text(">" + self.items[1], 0, 20)
-        else:
-            self.oled.text(" " + self.items[1], 0, 20)
-
-        # 3. KUBIOS
-        if self.index == 2:
-            self.oled.text(">" + self.items[2], 0, 30)
-        else:
-            self.oled.text(" " + self.items[2], 0, 30)
-
-        # 4. HISTORY
-        if self.index == 3:
-            self.oled.text(">" + self.items[3], 0, 40)
-        else:
-            self.oled.text(" " + self.items[3], 0, 40)
-
-        self.oled.show()
+        view.draw_menu(self.index, self.items)
 
     def move(self, step):
         self.index += step
@@ -59,31 +34,9 @@ class App:
         self.screen = "menu" # current state
         
         # Menu items
-        items = [
-            "1. MEASURE HR",
-            "2. BASIC HRV",
-            "3. KUBIOS",
-            "4. HISTORY"
-        ]
+        items = ["1. MEASURE HR", "2. BASIC HRV", "3. KUBIOS", "4. HISTORY"]
         self.menu = Menu(self.oled, items)
         
-    def show_measure_hr_screen(self):
-        self.oled.fill(0)
-
-        text_list = ["START","MESAUREMENT","BY PRESSING","BUTTON"] # list of rows
-
-        y = int((hardware.oled_height - 10*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
-        for row in text_list:
-            x = int((hardware.oled_width - 8*len(row))/2) # center vertically
-            self.oled.text(row, x, y) 
-            y += 10 # next row +10px 
-
-        # self.oled.text("      START", 0, 15)
-        # self.oled.text("   MESAUREMENT", 0, 25)
-        # self.oled.text("   BY PRESSING", 0, 35)
-        # self.oled.text("      BUTTON", 0, 45)
-        # self.oled.text("TO START", 0, 50)
-        self.oled.show()
 
     def run(self):
         self.menu.draw()
@@ -102,7 +55,7 @@ class App:
                     elif step == 0:
                         if self.menu.index == 0:
                             self.screen = "measure_hr"
-                            self.show_measure_hr_screen()
+                            view.display_center(["START","MESAUREMENT","BY PRESSING","BUTTON"])
                         
                     elif self.screen == "measure_hr":
                         if step == 0:
