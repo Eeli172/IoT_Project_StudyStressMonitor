@@ -10,10 +10,12 @@ class Menu:
         self.oled = oled
         self.items = items
         self.index = 0
+        self.pos = 0
 
     def draw(self):
-        index = self.index // 2 
-        view.draw_menu(index, self.items)
+        self.pos = self.index // 2
+        print(self.pos, self.index)
+        view.draw_menu(self.pos, self.items)
 
     def move(self, step):
         self.index += step
@@ -55,7 +57,7 @@ class App:
                         self.menu.draw()
                         
                     elif step == 0:
-                        if self.menu.index == 0:
+                        if self.menu.pos == 0:
                             self.screen = "measure_hr"
                             view.display_center(["START","MEASUREMENT","BY PRESSING","BUTTON"])
                         
