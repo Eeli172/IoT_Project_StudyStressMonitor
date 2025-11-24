@@ -1,8 +1,11 @@
 import hardware
 import micropython
 import view
+from config import config
+
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
+
 
 
 class Menu:
@@ -13,16 +16,17 @@ class Menu:
         self.pos = 0
 
     def draw(self):
-        self.pos = self.index // 2
+        self.pos = self.index // config["rotation_sensivity"]
         print(self.pos, self.index)
         view.draw_menu(self.pos, self.items)
 
     def move(self, step):
         self.index += step
         if self.index < 0:
-            self.index = len(self.items)*2 - 1
-        if self.index >= len(self.items)*2:
+            self.index = len(self.items) * config["rotation_sensivity"] - 1
+        if self.index >= len(self.items) * config["rotation_sensivity"]:
             self.index = 0
+
 
 
 class App:
@@ -37,8 +41,7 @@ class App:
         self.screen = "menu" # current state
         
         # Menu items
-        items = ["1. MEASURE HR", "2. BASIC HRV", "3. KUBIOS", "4. HISTORY"]
-        self.menu = Menu(self.oled, items)
+        self.menu = Menu(self.oled, config["menu_items"])
         
 
     def run(self):
@@ -59,7 +62,7 @@ class App:
                     elif step == 0:
                         if self.menu.pos == 0:
                             self.screen = "measure_hr"
-                            view.display_center(["START","MEASUREMENT","BY PRESSING","BUTTON"])
+                            view.display_center(config["screen_hr"])
                         
                     elif self.screen == "measure_hr":
                         if step == 0:

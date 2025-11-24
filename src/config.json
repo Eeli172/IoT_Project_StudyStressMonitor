@@ -1,5 +1,21 @@
 {
     "sampling_rate_hz": 250,
+    
+    "rotation_sensivity": 2, 
+
+    "menu_items": [
+        "1. MEASURE HR", 
+        "2. BASIC HRV", 
+        "3. KUBIOS", 
+        "4. HISTORY"
+    ],
+
+    "screen_hr": [
+        "START",
+        "MEASUREMENT",
+        "BY PRESSING",
+        "BUTTON"
+    ],
 
     "threshold": {
         "max": 30,
