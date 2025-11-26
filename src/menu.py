@@ -70,25 +70,6 @@ class App:
                             self.menu.draw()
                     
                    #elif self.screen == ""
-                    
-                if self.screen == "menu":
-                    
-                    if step != 0:
-                        self.menu.move(step)
-
-                        self.menu.draw()
-                        
-                    elif step == 0:
-                        if self.menu.pos == 0:
-                            self.screen = "measure_hr"
-                            view.display_center(config["screen_hr"])
-                        
-                    elif self.screen == "measure_hr":
-                        if step == 0:
-                            self.screen = "menu"
-                            self.menu.draw()
-                    
-                   #elif self.screen == ""
 
                 
                     

@@ -2,6 +2,7 @@ import hardware
 # "display layouts (functions that draw on the OLED)"
 
 
+
 def display_center(text_list): # list of rows, max 16 characters / row AND max 6 rows
     hardware.oled.fill(0)
     row_height_px = 10
@@ -14,7 +15,6 @@ def display_center(text_list): # list of rows, max 16 characters / row AND max 6
         y += char_width_px # next row +10px 
         
     hardware.oled.show()
-
 
 
 def draw_menu(index, items): # menu view by index for pointer and list of menu items - max 6 items
