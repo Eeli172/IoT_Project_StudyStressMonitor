@@ -28,11 +28,11 @@
         "password": "Projectgroup4"
     },
     
-    "mqtt": {
-        "broker": "192.168.4.253",
+    "kubios": {
+        "ip": "192.168.4.253",
         "port": 21883,
-        "topic_publish": "XXX",
-        "topic_command": "XXX"
+        "topic_pub": "kubios/request",
+        "topic_sub": "kubios/response"
     },
     
     "debug": false,

@@ -7,6 +7,7 @@
     ["config.json", "http://localhost:8000/src/config.json"],
     ["measure.py", "http://localhost:8000/src/measure.py"],
     ["view.py", "http://localhost:8000/src/view.py"],
+    ["kubios.py", "http://localhost:8000/src/kubios.py"],
 
     ["lib/filefifo.py", "http://localhost:8000/lib/filefifo.py"],	
     ["lib/fifo.py", "http://localhost:8000/lib/fifo.py"],
