@@ -20,7 +20,6 @@ class Menu:
 
     def draw(self):
         self.pos = self.index // config["rotation_sensivity"]
-        print(self.pos, self.index)
         view.draw_menu(self.pos, self.items)
 
     def move(self, step):
