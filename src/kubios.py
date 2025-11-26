@@ -11,10 +11,12 @@ class Kubios:
         self.received_values = {"topic": None, "msg": None}
         self.wlan = Wlan() # wlan class defined in config.py
 
+
         # this function is called automatically when a mqtt message is received
     def update_self(self, topic, msg): # update received values to self.received_values
         self.received_values["topic"] = topic.decode() # arrives as bytes -> make it a string
         self.received_values["msg"] = json.loads(msg.decode()) # payload is JSON -> decode + parse
+
 
         # sets up MQTT client and connects to the kubios-proxy
     def connect_mqtt(self): 
@@ -50,7 +52,7 @@ class Kubios:
             '{'
             '"mac": "' + self.wlan.mac + '",'
             '"type": "RRI",'
-            '"data": ' + json.dumps(ppi_list) + ','
+            '"data": ' + json.dumps(self.ppi_list) + ','
             '"analysis": { "type": "readiness" }'
             '}'
         )

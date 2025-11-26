@@ -51,14 +51,16 @@ class Encoder:
         self.button.irq(handler=self._button_handler, trigger=Pin.IRQ_FALLING, hard=True)
 
     def handler(self, pin):
+        print("turn")
         if self.b():                 # If B == 1
             self.fifo.put(-1)         # One direction
         else:                        # If B == 0
             self.fifo.put(1)        # Other direction
             
     def _button_handler(self, pin):
+        print("press")
         now = time.ticks_ms()
-        if time.ticks_diff(now, self.last_press) < 150:
+        if time.ticks_diff(now, self.last_press) < 250:
             return  # debounce
 
         self.last_press = now

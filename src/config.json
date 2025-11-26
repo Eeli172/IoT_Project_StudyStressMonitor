@@ -16,6 +16,21 @@
         "BY PRESSING",
         "BUTTON"
     ],
+    "screen_hrv": [
+        "-------",
+        "| HRV |",
+        "-------"
+    ],
+    "screen_history": [
+        "-----------",
+        "| HISTORY |",
+        "-----------"
+    ],
+    "screen_kubios": [
+        "----------",
+        "| KUBIOS |",
+        "----------"
+    ],
 
     "threshold": {
         "max": 30,
