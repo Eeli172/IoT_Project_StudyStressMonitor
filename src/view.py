@@ -4,12 +4,14 @@ import hardware
 
 def display_center(text_list): # list of rows, max 16 characters / row AND max 6 rows
     hardware.oled.fill(0)
-
-    y = int((hardware.oled_height - 10*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
+    row_height_px = 10
+    char_width_px = 8
+    
+    y = int((hardware.oled_height - char_width_px*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
     for row in text_list:
-        x = int((hardware.oled_width - 8*len(row))/2) # center vertically
+        x = int((hardware.oled_width - row_height_px*len(row))/2) # center vertically
         hardware.oled.text(row, x, y) 
-        y += 10 # next row +10px 
+        y += char_width_px # next row +10px 
         
     hardware.oled.show()
 
