@@ -32,6 +32,8 @@ class Kubios:
     
     def run(self):
         self.wlan.connect() # make a wlan connection
+        # reset any previous values when running again
+        self.received_values = {"topic": None, "msg": None}
 
 
         # try to connect to mqtt broker
@@ -90,7 +92,14 @@ class Kubios:
                 print("Error while waiting for message:".upper(), e)
                 sleep(1)
 
-        
+
+        # disconnect mqtt client
+        try:
+            mqtt_client.disconnect()
+        except Exception as e:
+            print("While trying to disconnect from the mqtt client".upper(), e)
+
+
         return self.received_values # return dictionary of received data
 
 
