@@ -58,7 +58,7 @@ class Encoder:
             
     def _button_handler(self, pin):
         now = time.ticks_ms()
-        if time.ticks_diff(now, self.last_press) < 250:
+        if time.ticks_diff(now, self.last_press) < 150:
             return  # debounce
 
         self.last_press = now
