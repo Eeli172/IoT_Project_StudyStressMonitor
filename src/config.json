@@ -10,27 +10,24 @@
         "4. HISTORY"
     ],
 
-    "screen_hr": [
+    "screen": [[
         "START",
         "MEASUREMENT",
         "BY PRESSING",
         "BUTTON"
-    ],
-    "screen_hrv": [
+    ],[
         "-------",
         "| HRV |",
         "-------"
-    ],
-    "screen_history": [
-        "-----------",
-        "| HISTORY |",
-        "-----------"
-    ],
-    "screen_kubios": [
+    ],[
         "----------",
         "| KUBIOS |",
         "----------"
-    ],
+    ],[
+        "-----------",
+        "| HISTORY |",
+        "-----------"
+    ]],
 
     "threshold": {
         "max": 30,

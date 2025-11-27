@@ -1,5 +1,6 @@
 import hardware
 import micropython
+import time
 import view
 from config import config
 from kubios import Kubios
@@ -54,27 +55,35 @@ class App:
                 self.menu.back = False
             
             
-            if self.encoder.fifo.has_data(): # button pressed or rotary encoder turned
+            if self.encoder.fifo.has_data(): # button pressed OR encoder turned
                 step = self.encoder.fifo.get()
-                self.menu.change = True # refresh menu screen on the beginning of the next iteration
+                self.menu.change = True # to refresh menu screen on the beginning of the next iteration
 
-                if step != 0: # rotary encoder was turned
+                if step != 0: # ENCODER WAS TURNED ############################
                     self.menu.move(step)
                     
 
-                else: # button was pressed
+                else: # BUTTON WAS PRESSED ############################
+
+                    time.sleep_ms(50) # debounce
+                    while self.encoder.fifo.has_data(): # drain fifo
+                        self.encoder.fifo.get()
+                    while self.encoder.button() == 0: # wait until button is released
+                        time.sleep_ms(10)
+
                     while not self.menu.back: # button not pressed
 
-                        if self.menu.pos == 0: # MEASURE HR
-                            view.display_center(config["screen_hr"])
+                        if self.menu.pos == 0: # MEASURE HR ############################
+                            view.display_center(config["screen"][0])
 
 
-                        if self.menu.pos == 1: # BASIC HRV
-                            view.display_center(config["screen_hrv"])
+                        if self.menu.pos == 1: # BASIC HRV ############################
+                            view.display_center(config["screen"][1])
 
 
-                        if self.menu.pos == 2: # KUBIOS
-                            view.display_center(config["screen_kubios"])
+                        if self.menu.pos == 2: # KUBIOS ############################
+                            view.display_center(config["screen"][2])
+
                             # TEST VALUES
                             ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800] #TEST VALUES
 
@@ -88,15 +97,22 @@ class App:
 
 
 
-                        if self.menu.pos == 3: # HISTORY
-                            view.display_center(config["screen_history"])
+                        if self.menu.pos == 3: # HISTORY ############################
+                            view.display_center(config["screen"][3])
 
 
-                        if self.encoder.fifo.has_data(): # BACK TO MENU
 
-                            if self.encoder.fifo.get() == 0: # button pressed
+                        if self.encoder.fifo.has_data(): # BACK TO MENU ############################
+                            if self.encoder.fifo.get() == 0: # button pressed (FIFO)
+                                if self.encoder.button() == 0: # button pressed (PHYSICAL) 
+                                    while self.encoder.button() == 0: # wait until button released
+                                        time.sleep_ms(10)
 
-                                self.menu.back = True
+                                    time.sleep_ms(50) # debounce
+                                    while self.encoder.fifo.has_data(): # drain fifo
+                                        self.encoder.fifo.get()
+
+                                    self.menu.back = True # end the loop
 
 
 
