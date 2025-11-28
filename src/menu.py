@@ -52,7 +52,6 @@ class App:
             if self.menu.change: # refresh menu screen after turning rotary encoder OR when returning back to menu
                 self.menu.draw()
                 self.menu.change = False
-                self.menu.back = False
             
             
             if self.encoder.fifo.has_data(): # button pressed OR encoder turned
@@ -91,7 +90,6 @@ class App:
 
                         kubios = Kubios(ppi_list)
                         received_data = kubios.run()
-                        self.menu.back = True
                             
                         # TEST PRINT 
                         print(received_data["msg"]) 
