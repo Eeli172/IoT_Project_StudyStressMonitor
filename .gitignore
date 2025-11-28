@@ -1,3 +1,4 @@
 .vscode/
 .micropico
 HeartRateMonitor_project.code-workspace
+__pycache__/

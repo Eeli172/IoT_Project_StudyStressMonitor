@@ -65,55 +65,46 @@ class App:
 
                 else: # BUTTON WAS PRESSED ############################
 
+                    # make sure fifo is empty and button is released before opening selected menu item  
                     time.sleep_ms(50) # debounce
                     while self.encoder.fifo.has_data(): # drain fifo
                         self.encoder.fifo.get()
                     while self.encoder.button() == 0: # wait until button is released
                         time.sleep_ms(10)
 
-                    while not self.menu.back: # button not pressed
 
-                        if self.menu.pos == 0: # MEASURE HR ############################
-                            view.display_center(config["screen"][0])
-
-
-                        if self.menu.pos == 1: # BASIC HRV ############################
-                            view.display_center(config["screen"][1])
-
-
-                        if self.menu.pos == 2: # KUBIOS ############################
-                            view.display_center(config["screen"][2])
-
-                            # TEST VALUES
-                            ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800] #TEST VALUES
-
-                            kubios = Kubios(ppi_list)
-                            received_data = kubios.run()
-                            self.menu.back = True
-                                
-
-                            # TEST PRINT 
-                            print(received_data["msg"]) 
+                    if self.menu.pos == 0: # MEASURE HR ############################
+                        view.display_center(config["screen"][0])
 
 
 
-                        if self.menu.pos == 3: # HISTORY ############################
-                            view.display_center(config["screen"][3])
+                    if self.menu.pos == 1: # BASIC HRV ############################
+                        view.display_center(config["screen"][1])
 
 
 
-                        if self.encoder.fifo.has_data(): # BACK TO MENU ############################
-                            if self.encoder.fifo.get() == 0: # button pressed (FIFO)
-                                if self.encoder.button() == 0: # button pressed (PHYSICAL) 
-                                    while self.encoder.button() == 0: # wait until button released
-                                        time.sleep_ms(10)
+                    if self.menu.pos == 2: # KUBIOS ############################
+                        view.display_center(config["screen"][2])
 
-                                    time.sleep_ms(50) # debounce
-                                    while self.encoder.fifo.has_data(): # drain fifo
-                                        self.encoder.fifo.get()
+                        # TEST VALUES
+                        ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800] #TEST VALUES
 
-                                    self.menu.back = True # end the loop
+                        kubios = Kubios(ppi_list)
+                        received_data = kubios.run()
+                        self.menu.back = True
+                            
+                        # TEST PRINT 
+                        print(received_data["msg"]) 
 
+
+
+                    if self.menu.pos == 3: # HISTORY ############################
+                        view.display_center(config["screen"][3])
+
+
+
+                    while self.encoder.fifo.has_data(): # drain fifo before returning to menu
+                        self.encoder.fifo.get()
 
 
 
