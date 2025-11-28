@@ -64,7 +64,7 @@ class App:
 
                 else: # BUTTON WAS PRESSED ############################
 
-                    # make sure fifo is empty and button is released before opening selected menu item  
+                    # make sure fifo is empty and button is released before opening selected menu item
                     time.sleep_ms(50) # debounce
                     while self.encoder.fifo.has_data(): # drain fifo
                         self.encoder.fifo.get()
@@ -77,12 +77,12 @@ class App:
                         time.sleep(1)
 
 
-                    if self.menu.pos == 1: # BASIC HRV ############################
+                    elif self.menu.pos == 1: # BASIC HRV ############################
                         view.display_center(config["screen"][1])
                         time.sleep(1)
 
 
-                    if self.menu.pos == 2: # KUBIOS ############################
+                    elif self.menu.pos == 2: # KUBIOS ############################
                         view.display_center(config["screen"][2])
 
                         # TEST VALUES
@@ -95,8 +95,7 @@ class App:
                         print(received_data["msg"]) 
 
 
-
-                    if self.menu.pos == 3: # HISTORY ############################
+                    elif self.menu.pos == 3: # HISTORY ############################
                         view.display_center(config["screen"][3])
                         time.sleep(1)
 
