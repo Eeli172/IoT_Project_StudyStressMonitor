@@ -75,12 +75,12 @@ class App:
 
                     if self.menu.pos == 0: # MEASURE HR ############################
                         view.display_center(config["screen"][0])
-
+                        time.sleep(1)
 
 
                     if self.menu.pos == 1: # BASIC HRV ############################
                         view.display_center(config["screen"][1])
-
+                        time.sleep(1)
 
 
                     if self.menu.pos == 2: # KUBIOS ############################
@@ -100,7 +100,7 @@ class App:
 
                     if self.menu.pos == 3: # HISTORY ############################
                         view.display_center(config["screen"][3])
-
+                        time.sleep(1)
 
 
                     while self.encoder.fifo.has_data(): # drain fifo before returning to menu
