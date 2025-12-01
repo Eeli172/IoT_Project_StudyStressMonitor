@@ -29,11 +29,8 @@ class Wlan:
 
 if __name__ == "__main__":
     print(config)
-    
-    SSID = config["wifi"]["ssid"]
-    PASSWORD = config["wifi"]["password"]
 
-    w = Wlan(SSID, PASSWORD)
+    w = Wlan()
     w.connect()
 
-    print(config['mac'])
+    print("MAC: ", w.mac)
