@@ -84,16 +84,8 @@ class App:
 
                     elif self.menu.pos == 2: # KUBIOS ############################
                         view.display_center(config["screen"][2])
-
-                        # TEST VALUES
-                        ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800] #TEST VALUES
-
-                        kubios = Kubios(ppi_list)
-                        received_data = kubios.run()
+                        Kubios().run()
                             
-                        # TEST PRINT 
-                        print(received_data["msg"]) 
-
 
                     elif self.menu.pos == 3: # HISTORY ############################
                         view.display_center(config["screen"][3])

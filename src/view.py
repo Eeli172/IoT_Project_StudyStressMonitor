@@ -8,13 +8,27 @@ def display_center(text_list): # list of rows, max 16 characters / row AND max 6
     row_height_px = 10
     char_width_px = 8
     
-    y = int((hardware.oled_height - char_width_px*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
+    y = int((hardware.oled_height - row_height_px*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
     for row in text_list:
-        x = int((hardware.oled_width - row_height_px*len(row))/2) # center vertically
+        x = int((hardware.oled_width - char_width_px*len(row))/2) # center vertically
         hardware.oled.text(row, x, y) 
         y += char_width_px # next row +10px 
         
     hardware.oled.show()
+
+def display_left(text_list): # list of rows, max 16 characters / row AND max 6 rows
+    hardware.oled.fill(0)
+    row_height_px = 10
+    char_width_px = 8
+    
+    y = int((hardware.oled_height - row_height_px*len(text_list))/2) # calculate y-position for the first row to center the whole text horizontally
+    for row in text_list:
+        x = int((hardware.oled_width - char_width_px*len(row))/2) # center vertically
+        hardware.oled.text(row, 0, y) 
+        y += char_width_px # next row +10px 
+        
+    hardware.oled.show()
+
 
 
 def draw_menu(index, items): # menu view by index for pointer and list of menu items - max 6 items
@@ -32,15 +46,17 @@ if __name__ == "__main__":
     import time
 
 
-    t = ["123ewg4", "43523454523", "fdaf aefaf feeww", "234324"]
+    t = [
+        "ERROR","","SENDING","","DATA",
+    ]
     display_center(t)
 
-    for i in range(4):
-        time.sleep(0.5)
-        items = [
-            "1. MEASURE HR",
-            "2. BASIC HRV",
-            "3. KUBIOS",
-            "4. HISTORY"
-        ]
-        draw_menu(i, items)
+    # for i in range(4):
+    #     time.sleep(0.5)
+    #     items = [
+    #         "1. MEASURE HR",
+    #         "2. BASIC HRV",
+    #         "3. KUBIOS",
+    #         "4. HISTORY"
+    #     ]
+    #     draw_menu(i, items)

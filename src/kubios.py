@@ -2,12 +2,14 @@ from time import sleep
 from umqtt.simple import MQTTClient
 from config import config, Wlan
 import json
+import view
+import hardware
 
 
 
 class Kubios:
-    def __init__(self, ppi_list):
-        self.ppi_list = ppi_list
+    def __init__(self):
+        self.ppi_list = None
         self.received_values = {"topic": None, "msg": None}
         self.wlan = Wlan() # wlan class defined in config.py
 
@@ -29,21 +31,32 @@ class Kubios:
 
         return client
 
+
     
     def run(self):
-        self.wlan.connect() # make a wlan connection
+        try: # make a wlan connection 
+            self.wlan.connect() 
+            view.display_center(["CONNECTING","","TO","","WLAN"])
+        except:
+            view.display_center(["WLAN","","CONNECTION","","FAILED"])
+
         # reset any previous values when running again
         self.received_values = {"topic": None, "msg": None}
+
+
+        # TEST VALUES
+        self.ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800] #TEST VALUES
 
 
         # try to connect to mqtt broker
         try:
             mqtt_client = self.connect_mqtt()
-
         except Exception as e:
             # print what went wrong and kill the script
             print("Exception while connexting to kubios proxy: ".upper(), e)
+            view.display_center(config["kubios_error"])
             raise SystemExit()
+
 
 
         mqtt_client.subscribe(config["kubios"]["topic_sub"]) # subscribe to kubios response topic
@@ -66,6 +79,7 @@ class Kubios:
         try:
             mqtt_client.publish(kubios_topic, kubios_payload)
         except Exception as e:
+            view.display_center(config["kubios_error"])
             print("Failed to send Kubios request:".upper(), e)
 
 
@@ -90,7 +104,7 @@ class Kubios:
 
             except Exception as e:
                 print("Error while waiting for message:".upper(), e)
-                sleep(1)
+                view.display_center(config["kubios_error"])
 
 
         # disconnect mqtt client
@@ -100,15 +114,21 @@ class Kubios:
             print("While trying to disconnect from the mqtt client".upper(), e)
 
 
-        return self.received_values # return dictionary of received data
+
+        results = [
+            f"MEAN HR: {int(self.received_values["msg"]["data"]["analysis"]["mean_hr_bpm"])}", 
+            f"MEAN PPI: {int(self.received_values["msg"]["data"]["analysis"]["mean_rr_ms"])}", 
+            f"RMSSD: {int(self.received_values["msg"]["data"]["analysis"]["rmssd_ms"])}", 
+            f"SDNN: {int(self.received_values["msg"]["data"]["analysis"]["sdnn_ms"])}", 
+            f"SNS: {self.received_values["msg"]["data"]["analysis"]["sns_index"]:.3f}", 
+            f"PNS: {self.received_values["msg"]["data"]["analysis"]["pns_index"]:.3f}", 
+        ]
+        view.display_left(results)
+
+        sleep(3)
 
 
 if __name__ == "__main__": # main block for testing
 
-    ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800]
-    kubios = Kubios(ppi_list)
-    received_values = kubios.run()
+    Kubios().run()
     
-    
-    print(received_values["topic"])
-    print(received_values["msg"])

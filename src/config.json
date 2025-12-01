@@ -29,6 +29,8 @@
         "-----------"
     ]],
 
+    "kubios_error": ["ERROR","","SENDING","","DATA"],
+
     "threshold": {
         "max": 30,
         "min": 240,
@@ -47,7 +49,7 @@
         "topic_sub": "kubios/response"
     },
     
-    "debug": false,
+    "debug": true,
 
     "kubios_enabled": false
 }
