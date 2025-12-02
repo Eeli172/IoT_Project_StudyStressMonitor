@@ -1,8 +1,3 @@
-from machine import Pin, I2C, ADC
-from ssd1306 import SSD1306_I2C
-from piotimer import Piotimer
-from fifo import Fifo
-from config import config
 import time
 import micropython
 from hardware import Sensor
@@ -12,16 +7,12 @@ micropython.alloc_emergency_exception_buf(200)
 def measure():
     sensor = Sensor()
     sensor.start()
-    all_data = []
     
-    SF = 250 # frequency
-    MAX_PEAKS = 20 # max number of peaks in the list
     peaks = []
     first_signal = []
     last_peak_index = None
     index = 0
     data_previous = None
-    data_current = 0
     slope_previous = None
     slope = 0
 
@@ -32,7 +23,7 @@ def measure():
             printed = True
         
         if sensor.fifo.has_data():
-            if sensor.fifo.get() > 1000: # Signal stabilization
+            if 40000 > sensor.fifo.get() > 20000: # Signal stabilization
                 printed = False
                 break
          
@@ -58,7 +49,6 @@ def measure():
     
     MIN_PEAK_DIST = 125 # min interval = 120 bpm max (reduces nois)
     
-    last_print = time.ticks_ms()
     
     measure_time = time.ticks_ms()
     while time.ticks_diff(time.ticks_ms(), measure_time) < 32000: # 32000 = 32 sekuntia
@@ -100,5 +90,10 @@ def measure():
 
 
 if __name__ == "__main__":
-    x = measure()
-    print(x)
+    ppi_list = measure()
+    mean_ppi = sum(ppi_list) / len(ppi_list)
+
+
+    print(ppi_list)
+    print("mean ppi:", mean_ppi, "ms")
+    print(" mean hr:", 60000/mean_ppi, "bpm")

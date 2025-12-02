@@ -80,17 +80,15 @@ class App:
 
 
                     elif self.menu.pos == 1: # BASIC HRV ############################
-                        view.display_center(config["screen"][1])
                         Hrv().run()
 
 
                     elif self.menu.pos == 2: # KUBIOS ############################
-                        view.display_center(config["screen"][2])
                         Kubios().run()
                             
 
                     elif self.menu.pos == 3: # HISTORY ############################
-                        view.display_center(config["screen"][3])
+                        view.display_center(config["screen"][1])
                         time.sleep(1)
 
 

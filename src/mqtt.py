@@ -70,9 +70,9 @@ class Mqtt:
         print("MQTT MODE: ", self.mode)
         try: # make a wlan connection 
             self.wlan.connect() 
-            view.display_center(["CONNECTING","","TO","","WLAN"])
-        except:
+        except Exception as e:
             view.display_center(["WLAN","","CONNECTION","","FAILED"])
+            print("WLAN CONNECTION FAILED: ", e)
 
         # reset any previous values when running again
         self.received_values = {"topic": None, "msg": None}

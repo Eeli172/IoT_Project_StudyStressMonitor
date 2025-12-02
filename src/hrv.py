@@ -2,7 +2,7 @@ from config import config
 from mqtt import Mqtt
 import time
 from hardware import Encoder
-from view import display_left
+from view import display_center, display_left
 from ppi_list import measure
 
 
@@ -77,10 +77,28 @@ class Hrv:
 
 
     def run(self):
-        self.calc_hrv() # get data
+        # plot on oled AND wait until button is pressed
+        display_center(["TO START HRV-", "MEASUREMENT", "", "1. PLACE THUMB", "ON SENSOR", "2. PRESS BUTTON"])
+        encoder = Encoder()
+        button_pressed = False
+        
+        while not button_pressed: 
+            if encoder.fifo.has_data():
+                if encoder.fifo.get() == 0:
+                    button_pressed = True
 
+
+        # plot on oled AND get data
+        display_center(["Collecting", " data.."])
+        self.calc_hrv()
+
+
+        # plot on oled AND send data to broker
+        display_center(["Sending data.."])
         self.result = self.mqtt.run(self.topic_pub, self.topic_sub, self.payload)
 
+
+        # plot calculations on oled
         display_left([
             f'MEAN HR: {int(self.payload["mean_hr"])}',
             f'MEAN PPI: {int(self.payload["mean_ppi"])}',
@@ -90,7 +108,6 @@ class Hrv:
 
 
         # return to menu when button pressed
-        encoder = Encoder()
         button_pressed = False
 
         while not button_pressed:

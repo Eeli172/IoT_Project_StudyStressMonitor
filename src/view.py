@@ -12,7 +12,7 @@ def display_center(text_list): # list of rows, max 16 characters / row AND max 6
     for row in text_list:
         x = int((hardware.oled_width - char_width_px*len(row))/2) # center vertically
         hardware.oled.text(row, x, y) 
-        y += char_width_px # next row +10px 
+        y += row_height_px # next row +10px 
         
     hardware.oled.show()
 
@@ -25,7 +25,7 @@ def display_left(text_list): # list of rows, max 16 characters / row AND max 6 r
     for row in text_list:
         x = int((hardware.oled_width - char_width_px*len(row))/2) # center vertically
         hardware.oled.text(row, 0, y) 
-        y += char_width_px # next row +10px 
+        y += row_height_px # next row +10px 
         
     hardware.oled.show()
 
@@ -43,20 +43,7 @@ def draw_menu(index, items): # menu view by index for pointer and list of menu i
 
 
 if __name__ == "__main__":
-    import time
 
 
-    t = [
-        "ERROR","","SENDING","","DATA",
-    ]
-    display_center(t)
+    display_center(["TO START", "MEASUREMENT", "PLACE FINGER", "ON SENSOR", "AND", "PRESS BUTTON"])
 
-    # for i in range(4):
-    #     time.sleep(0.5)
-    #     items = [
-    #         "1. MEASURE HR",
-    #         "2. BASIC HRV",
-    #         "3. KUBIOS",
-    #         "4. HISTORY"
-    #     ]
-    #     draw_menu(i, items)
