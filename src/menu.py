@@ -4,6 +4,7 @@ import time
 import view
 from config import config
 from kubios import Kubios
+from hrv import Hrv
 
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
@@ -79,7 +80,7 @@ class App:
 
                     elif self.menu.pos == 1: # BASIC HRV ############################
                         view.display_center(config["screen"][1])
-                        time.sleep(1)
+                        Hrv().run()
 
 
                     elif self.menu.pos == 2: # KUBIOS ############################
