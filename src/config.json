@@ -29,7 +29,7 @@
         "-----------"
     ]],
 
-    "kubios_error": ["ERROR","","SENDING","","DATA"],
+    "mqtt_error": ["ERROR","","SENDING","","DATA"],
 
     "threshold": {
         "max": 30,
@@ -42,11 +42,13 @@
         "password": "Projectgroup4"
     },
     
-    "kubios": {
+    "broker": {
         "ip": "192.168.4.253",
         "port": 21883,
-        "topic_pub": "kubios/request",
-        "topic_sub": "kubios/response"
+        "kubios_pub": "kubios/request",
+        "kubios_sub": "kubios/response",
+        "add_record": "database/records/add",
+        "topic_response": "database/response"
     },
     
     "debug": true,
