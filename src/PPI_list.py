@@ -60,7 +60,7 @@ def measure(sensor):
     last_print = time.ticks_ms()
     
     measure_time = time.ticks_ms()
-    while time.time_diff(time_ticks_ms(), measure_time) < 32000:
+    while time.ticks_diff(time.ticks_ms(), measure_time) < 32000: # 32000 = 32 sekuntia
         if printed == False:
             print("Looking for peaks...")
             printed = True
