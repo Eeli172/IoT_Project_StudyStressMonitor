@@ -94,14 +94,8 @@ def measure():
 
     return intervals
 
-    
-    
-        
-    
-    
 
 
-
-
-
-
+if __name__ == "__main__":
+    x = measure()
+    print(x)
