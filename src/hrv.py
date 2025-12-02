@@ -1,6 +1,8 @@
 from config import config
 from mqtt import Mqtt
 import time
+from hardware import Encoder
+from view import display_left
 
 
 
@@ -78,9 +80,23 @@ class Hrv:
 
         self.result = self.mqtt.run(self.topic_pub, self.topic_sub, self.payload)
 
-        print(1, self.result)
+        display_left([
+            f'MEAN HR: {int(self.payload["mean_hr"])}',
+            f'MEAN PPI: {int(self.payload["mean_ppi"])}',
+            f'RMSSD: {int(self.payload["rmssd"])}',
+            f'SDNN: {int(self.payload["sdnn"])}'
+        ])
 
-        time.sleep(3)
+
+        # return to menu when button pressed
+        encoder = Encoder()
+        button_pressed = False
+
+        while not button_pressed:
+            if encoder.fifo.has_data():
+                while encoder.fifo.has_data():
+                    if encoder.fifo.get() == 0:
+                        button_pressed = True
 
 
 

@@ -38,7 +38,6 @@ class Mqtt:
             '}'
         )
         try:
-            print(1, mqtt_payload)
             self.client.publish(b'database/devices/add', mqtt_payload)
         except Exception as e:
             view.display_center(config["mqtt_error"])
@@ -68,7 +67,7 @@ class Mqtt:
 
     
     def run(self, topic_pub, topic_sub, data):
-        print("MODE: ", self.mode)
+        print("MQTT MODE: ", self.mode)
         try: # make a wlan connection 
             self.wlan.connect() 
             view.display_center(["CONNECTING","","TO","","WLAN"])
@@ -119,8 +118,6 @@ class Mqtt:
 
         # try to publish the request
         try:
-            print("  Topic  :", topic_pub)
-            print("  Payload:", mqtt_payload)
             self.client.publish(topic_pub, mqtt_payload)
 
         except Exception as e:
@@ -157,7 +154,6 @@ class Mqtt:
             self.client.disconnect()
         except Exception as e:
             print("While trying to disconnect from the mqtt client".upper(), e)
-
 
         return self.received_values
 

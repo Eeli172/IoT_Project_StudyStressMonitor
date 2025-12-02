@@ -53,6 +53,7 @@ class App:
             if self.menu.change: # refresh menu screen after turning rotary encoder OR when returning back to menu
                 self.menu.draw()
                 self.menu.change = False
+                self.encoder = hardware.Encoder()
             
             
             if self.encoder.fifo.has_data(): # button pressed OR encoder turned
@@ -93,8 +94,9 @@ class App:
                         time.sleep(1)
 
 
-                    while self.encoder.fifo.has_data(): # drain fifo before returning to menu
-                        self.encoder.fifo.get()
+                    while not self.encoder.button.value(): # drain fifo before returning to menu
+                        while self.encoder.fifo.has_data():
+                            self.encoder.fifo.get()
 
 
 

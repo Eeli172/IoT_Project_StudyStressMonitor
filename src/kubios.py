@@ -2,12 +2,12 @@ from mqtt import Mqtt
 from config import config
 from time import sleep
 from view import display_left
+from hardware import Encoder
 
 
 class Kubios:
-    def __init__(self) -> None:
+    def __init__(self):
         self.mode = "kubios"
-        self.result = []
         self.ppi_list  = []
         self.mqtt = Mqtt("kubios")
         self.topic_pub = config["broker"]["kubios_pub"]
@@ -21,20 +21,28 @@ class Kubios:
     def run(self):
         self.get_data()
 
-        self.result = self.mqtt.run(self.topic_pub, self.topic_sub, self.ppi_list)
+        result = self.mqtt.run(self.topic_pub, self.topic_sub, self.ppi_list)
 
-        self.result = [
-            f"MEAN HR: {int(self.result["msg"]["data"]["analysis"]["mean_hr_bpm"])}", 
-            f"MEAN PPI: {int(self.result["msg"]["data"]["analysis"]["mean_rr_ms"])}", 
-            f"RMSSD: {int(self.result["msg"]["data"]["analysis"]["rmssd_ms"])}", 
-            f"SDNN: {int(self.result["msg"]["data"]["analysis"]["sdnn_ms"])}", 
-            f"SNS: {self.result["msg"]["data"]["analysis"]["sns_index"]:.3f}", 
-            f"PNS: {self.result["msg"]["data"]["analysis"]["pns_index"]:.3f}", 
+        result_list = [
+            f"MEAN HR: {int(result["msg"]["data"]["analysis"]["mean_hr_bpm"])}", 
+            f"MEAN PPI: {int(result["msg"]["data"]["analysis"]["mean_rr_ms"])}", 
+            f"RMSSD: {int(result["msg"]["data"]["analysis"]["rmssd_ms"])}", 
+            f"SDNN: {int(result["msg"]["data"]["analysis"]["sdnn_ms"])}", 
+            f"SNS: {result["msg"]["data"]["analysis"]["sns_index"]:.3f}", 
+            f"PNS: {result["msg"]["data"]["analysis"]["pns_index"]:.3f}"
         ]
 
-        display_left(self.result)
+        display_left(result_list)
 
-        sleep(3)
+        # return to menu when button pressed
+        encoder = Encoder()
+        button_pressed = False
+
+        while not button_pressed:
+            if encoder.fifo.has_data():
+                while encoder.fifo.has_data():
+                    if encoder.fifo.get() == 0:
+                        button_pressed = True
 
 
 if __name__ == "__main__":
