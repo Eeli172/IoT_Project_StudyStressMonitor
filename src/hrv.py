@@ -3,6 +3,7 @@ from mqtt import Mqtt
 import time
 from hardware import Encoder
 from view import display_left
+from ppi_list import measure
 
 
 
@@ -24,7 +25,7 @@ class Hrv:
 
 
     def get_ppi(self):
-        self.ppi = [828, 836, 852, 760, 800, 860, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800]
+        self.ppi = measure()
         self.payload["timestamp"] = time.time()
 
 

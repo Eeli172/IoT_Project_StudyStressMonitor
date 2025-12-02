@@ -1,6 +1,6 @@
 from mqtt import Mqtt
 from config import config
-from time import sleep
+from ppi_list import measure
 from view import display_left
 from hardware import Encoder
 
@@ -15,7 +15,7 @@ class Kubios:
 
 
     def get_data(self):
-        self.ppi_list = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800]
+        self.ppi_list = measure()
 
 
     def run(self):

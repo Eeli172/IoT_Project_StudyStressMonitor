@@ -9,8 +9,9 @@ from hardware import Sensor
 
 micropython.alloc_emergency_exception_buf(200)
             
-def measure(sensor):
-    
+def measure():
+    sensor = Sensor()
+    sensor.start()
     all_data = []
     
     SF = 250 # frequency
@@ -87,6 +88,10 @@ def measure(sensor):
         if 120 <= interval <= 250:  
             intervals.append(interval)
             
+    
+    sensor.stop()
+
+
     return intervals
 
     
