@@ -91,8 +91,11 @@ def measure():
     
     sensor.stop()
 
+    result = []
+    for interval in intervals:
+        result.append(interval*4)
 
-    return intervals
+    return result
 
 
 
