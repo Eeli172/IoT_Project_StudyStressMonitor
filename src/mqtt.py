@@ -11,7 +11,7 @@ class Mqtt:
         self.ppi_list = None
         self.received_values = {"topic": None, "msg": None}
         self.wlan = Wlan() # wlan class defined in config.py
-
+        self.client = None
 
         # this function is called automatically when a mqtt message is received
     def update_self(self, topic, msg): # update received values to self.received_values
@@ -30,9 +30,45 @@ class Mqtt:
 
         return client
 
+    def add_device(self):
+        mqtt_payload = (
+            '{'
+                '"mac": "' + self.wlan.mac + '",' 
+                '"device_name": "' + self.wlan.mac + ' pico"'
+            '}'
+        )
+        try:
+            print(1, mqtt_payload)
+            self.client.publish(b'database/devices/add', mqtt_payload)
+        except Exception as e:
+            view.display_center(config["mqtt_error"])
+            print("Failed to send request:".upper(), e)
+
+        received = False # have we received a response from broker?  -  False = no
+        correct_response = False # was the recently received response meant for us?  -  False = no
+
+        while not correct_response:
+            try:
+                if not received:
+                    self.client.wait_msg()   # This will block until a message arrives - triggers callback
+                    received = True
+
+                # check if message actually belongs to us by comparing mac addresses
+                elif self.received_values["msg"] != None:
+                    if self.received_values["msg"]["mac"] == self.wlan.mac:
+                        correct_response = True # we got our response
+                    else: 
+                        received = False # we got someone else's response, let's wait for a new response
+
+
+            except Exception as e:
+                print("Error while waiting for message:".upper(), e)
+
+
 
     
     def run(self, topic_pub, topic_sub, data):
+        print("MODE: ", self.mode)
         try: # make a wlan connection 
             self.wlan.connect() 
             view.display_center(["CONNECTING","","TO","","WLAN"])
@@ -45,7 +81,7 @@ class Mqtt:
 
         # try to connect to mqtt broker
         try:
-            mqtt_client = self.connect_mqtt()
+            self.client = self.connect_mqtt()
         except Exception as e:
             # print what went wrong and kill the script
             print("Exception while connexting to kubios proxy: ".upper(), e)
@@ -54,7 +90,7 @@ class Mqtt:
 
 
 
-        mqtt_client.subscribe(topic_sub) # subscribe to response topic
+        self.client.subscribe(topic_sub) # subscribe to response topic
 
 
         # payload to send to broker
@@ -69,7 +105,7 @@ class Mqtt:
             )
 
         elif self.mode == "hrv":
-            timestamp = 123456789
+            self.add_device()
             mqtt_payload = (
                 '{'
                 '"mac": "' + self.wlan.mac + '",'
@@ -83,7 +119,10 @@ class Mqtt:
 
         # try to publish the request
         try:
-            mqtt_client.publish(topic_pub, mqtt_payload)
+            print("  Topic  :", topic_pub)
+            print("  Payload:", mqtt_payload)
+            self.client.publish(topic_pub, mqtt_payload)
+
         except Exception as e:
             view.display_center(config["mqtt_error"])
             print("Failed to send request:".upper(), e)
@@ -97,7 +136,7 @@ class Mqtt:
         while not correct_response:
             try:
                 if not received:
-                    mqtt_client.wait_msg()   # This will block until a message arrives - triggers callback
+                    self.client.wait_msg()   # This will block until a message arrives - triggers callback
                     received = True
 
                 # check if message actually belongs to us by comparing mac addresses
@@ -115,7 +154,7 @@ class Mqtt:
 
         # disconnect mqtt client
         try:
-            mqtt_client.disconnect()
+            self.client.disconnect()
         except Exception as e:
             print("While trying to disconnect from the mqtt client".upper(), e)
 
