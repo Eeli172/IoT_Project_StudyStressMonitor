@@ -114,8 +114,7 @@ def measure(sensor, encoder):
             data_previous = data
         now = time.ticks_ms()
         
-        if time.ticks_diff(now,
-                           last_print) >= PRINT_INTERVAL:  # waiting for PRINT_INTERVAL seconds to collect the new peaks
+        if time.ticks_diff(now, last_print) >= PRINT_INTERVAL:  # waiting for PRINT_INTERVAL seconds to collect the new peaks
             last_print = now
 
             if len(peaks) >= 2:
