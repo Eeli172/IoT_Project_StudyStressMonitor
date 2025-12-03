@@ -181,36 +181,8 @@ class Mqtt:
             print("Failed to send request:".upper(), e)
 
 
-
+        # wait for response and confirm it is for us before continuing
         self.check_response()
-        # # keep looping until we get a response AND it's for our device's mac
-
-        # received = False # have we received a response from broker?  -  False = no
-        # correct_response = False # was the recently received response meant for us?  -  False = no
-
-        # while not correct_response:
-        #     try:
-        #         print(1)
-        #         if not received:
-        #             print(2)
-        #             self.client.wait_msg()   # This will block until a message arrives - triggers callback
-        #             print(3)
-        #             received = True
-
-        #         # check if message actually belongs to us by comparing mac addresses
-        #         if self.received_values["msg"] != None:
-        #             print(4, self.received_values)
-        #             if self.received_values["msg"]["mac"] == self.wlan.mac:
-        #                 print(5)
-        #                 correct_response = True # we got our response
-        #             else: 
-        #                 print(6)
-        #                 received = False # we got someone else's response, let's wait for a new response
-
-
-        #     except Exception as e:
-        #         print("Error while waiting for message:".upper(), e)
-        #         view.display_center(config["mqtt_error"])
 
 
 
