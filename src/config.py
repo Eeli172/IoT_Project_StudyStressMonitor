@@ -1,6 +1,7 @@
 import json
 import network
 from time import sleep
+import view
 
 
 def load_config():
@@ -18,10 +19,19 @@ class Wlan:
         self.password = config["wifi"]["password"]
 
     def connect(self):
-        self.connection.connect(self.ssid, self.password) # start connection to router
         while not self.connection.isconnected():
             print("Connecting to WiFi...")
-            sleep(1)
+            try:
+                self.connection.connect(self.ssid, self.password) # start connection to router
+                while not self.connection.isconnected():
+                    pass
+                
+            except Exception as e:
+                print()
+                view.display_center(["WLAN", "CONNECTION", "FAILED","","TRYING AGAIN"])
+
+
+
 
         print("SELF.IP:", self.connection.ifconfig()[0])
 

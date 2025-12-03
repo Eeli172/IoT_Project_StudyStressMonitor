@@ -140,12 +140,8 @@ class Mqtt:
     
 
     def run(self, topic_pub, topic_sub, data):
-        while True: # loop until wlan connection made succesful
-            try: 
-                self.wlan.connect() 
-                break # break when connected
-            except Exception as e:
-                view.display_center(["WLAN", "CONNECTION", "FAILED","","TRYING AGAIN"])
+        # connect to wlan
+        self.wlan.connect() 
 
 
         # reset previous values when running again
@@ -156,10 +152,8 @@ class Mqtt:
         try:
             self.client = self.connect_mqtt()
         except Exception as e:
-            # print what went wrong and kill the script
             print("Exception while connexting to kubios proxy: ".upper(), e)
             view.display_center(config["mqtt_error"])
-            raise SystemExit()
 
 
         # subscribe to response topic
@@ -172,10 +166,7 @@ class Mqtt:
 
         # try to publish the request
         try:
-            print("topic:", topic_pub)
-            print("payload:", mqtt_payload)
             self.client.publish(topic_pub, mqtt_payload)
-
         except Exception as e:
             view.display_center(config["mqtt_error"])
             print("Failed to send request:".upper(), e)
@@ -185,12 +176,8 @@ class Mqtt:
         self.check_response()
 
 
-
         # disconnect mqtt client
-        try:
-            self.client.disconnect()
-        except Exception as e:
-            print("While trying to disconnect from the mqtt client".upper(), e)
+        self.client.disconnect()
 
         return self.received_values # return the correct response
 
