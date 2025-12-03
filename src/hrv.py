@@ -100,14 +100,16 @@ class Hrv:
 
         # plot calculations on oled
         display_left([
-            f'MEAN HR: {int(self.payload["mean_hr"])}',
-            f'MEAN PPI: {int(self.payload["mean_ppi"])}',
-            f'RMSSD: {int(self.payload["rmssd"])}',
-            f'SDNN: {int(self.payload["sdnn"])}'
+            'MEAN HR:' + str(int(self.payload["mean_hr"])),
+            'MEAN PPI:' + str(int(self.payload["mean_ppi"])),
+            'RMSSD:' + str(int(self.payload["rmssd"])),
+            'SDNN:' + str(int(self.payload["sdnn"]))
         ])
 
+        # drain fifo and return to menu when button pressed
+        while encoder.fifo.has_data():
+            encoder.fifo.get()
 
-        # return to menu when button pressed
         button_pressed = False
 
         while not button_pressed:

@@ -16,6 +16,7 @@ class Kubios:
 
     def get_data(self):
         self.ppi_list = measure()
+        # self.ppi_list = [800,800,800,800,800,800,800,800,800,800,800]
 
 
     def run(self):
@@ -30,6 +31,7 @@ class Kubios:
                     button_pressed = True
 
 
+        print("FIFO HAS DATA: ", encoder.fifo.has_data())
         # plot on oled AND get data
         display_center(["Collecting", " data.."])
         self.get_data()
@@ -50,7 +52,10 @@ class Kubios:
             f"PNS: {result["msg"]["data"]["analysis"]["pns_index"]:.3f}"
         ])
 
-        # return to menu when button pressed
+        # drain fifo and return to menu when button is pressed
+        while encoder.fifo.has_data():
+            encoder.fifo.get()
+
         button_pressed = False
 
         while not button_pressed:
