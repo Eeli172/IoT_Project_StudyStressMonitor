@@ -2,3 +2,5 @@
 .micropico
 HeartRateMonitor_project.code-workspace
 __pycache__/
+src/accepted.txt
+src/rejected.txt

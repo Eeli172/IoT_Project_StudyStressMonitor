@@ -5,12 +5,14 @@ from hardware import Sensor
 micropython.alloc_emergency_exception_buf(200)
             
 def measure():
-    sensor = Sensor()
-    sensor.start()
+    sensor = Sensor() 
+    sensor.start() # start gathering data into fifo
     
     peaks = []
-    intervals = []
+    ppi_list = []
     first_signal = []
+    max_jump_pct = 0.20 # %  # allowed change between two consecutive intervals
+    last_interval = 1
     last_peak_index = None
     index = 0
     data_previous = None
@@ -53,7 +55,7 @@ def measure():
     
     
     measure_time = time.ticks_ms()
-    while time.ticks_diff(time.ticks_ms(), measure_time) < 30000 or len(intervals) < kubios_min_length: # 30000 = 30 sekuntia
+    while time.ticks_diff(time.ticks_ms(), measure_time) < 30000 or len(ppi_list) < kubios_min_length: # 30000 = 30 sekuntia
         if printed == False:
             print("Looking for peaks...")
             printed = True
@@ -72,18 +74,30 @@ def measure():
                             last_peak_index = index-1
                             if len(peaks) >= 2:
                                 interval = peaks[-1][1] - peaks[-2][1] # is selected index in peaks list and its difference
-                                if 120 <= interval <= 250:
-                                    intervals.append(interval*4)
+                                
+                                if 75 <= interval <= 500: # 200-30bpm allowed
 
+                                    # allowed jump - if last interval and current interval isn't too far from each other -> True 
+                                    allowed_jump = last_interval*(1+max_jump_pct) >= interval and last_interval*(1-max_jump_pct) <= interval
+
+                                    if len(ppi_list) == 0: # first iteration
+                                        last_interval = interval
+                                        ppi_list.append(interval*4)
+
+                                    elif allowed_jump: # if there is not too large jump from the last interval, add the interval to the list
+                                        last_interval = interval
+                                        ppi_list.append(interval*4)
+
+ 
                 slope_previous = slope
             data_previous = data
             
         
     
-    sensor.stop()
+    sensor.stop() # stop gathering data into fifo
 
 
-    return intervals
+    return ppi_list # return 
 
 
 
