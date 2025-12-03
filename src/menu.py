@@ -5,7 +5,7 @@ import view
 from config import config
 from kubios import Kubios
 from hrv import Hrv
-from measure_main import measure
+from measure import measure
 
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
@@ -14,18 +14,19 @@ micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
 
 class Menu:
     def __init__(self, oled, items):
-        self.oled = oled
-        self.items = items
-        self.index = 0
-        self.pos = 0 
-        self.back = False
-        self.change = True
+        self.oled = oled # instance of oled
+        self.items = items # menu options
+        self.index = 0 # encoder's +1's and -1's are added to this variable
+        self.pos = 0 # position in menu - index divided by rotation_sensivity defined in config.json
+        self.change = True # helper to tell if any change happened; do we need to refresh the oled 
 
-    def draw(self):
-        self.pos = self.index // config["rotation_sensivity"]
-        view.draw_menu(self.pos, self.items)
 
-    def move(self, step):
+    def draw(self): 
+        self.pos = self.index // config["rotation_sensivity"] # calculate menu position
+        view.draw_menu(self.pos, self.items) # draw the menu
+
+
+    def move(self, step): # move in menu - method is called when encoder is turned
         self.index += step
         if self.index < 0:
             self.index = len(self.items) * config["rotation_sensivity"] - 1
@@ -44,9 +45,6 @@ class App:
         
         # Sensor
         self.sensor = hardware.Sensor()
-        
-        # States
-        # self.screen = "menu" # current state
         
         # Menu items
         self.menu = Menu(self.oled, config["menu_items"])
@@ -95,10 +93,7 @@ class App:
                         if result == "abort":
                             self.menu.change = True
                             self.sensor.stop()        
-                                
-                                    
-                                
-                                
+                                                                
 
 
                     elif self.menu.pos == 1: # BASIC HRV ############################
@@ -119,31 +114,7 @@ class App:
                             self.encoder.fifo.get()
 
 
-
-
-        # self.menu.draw()
-        # self.screen = "menu"
-
-        # while True:
-        #     while self.encoder.fifo.has_data():
-        #         step = self.encoder.fifo.get()
-                
-        #         if self.screen == "menu":
-                    
-        #             if step != 0:
-        #                 self.menu.move(step)
-
-        #                 self.menu.draw()
-                        
-        #             elif step == 0:
-        #                 if self.menu.pos == 0:
-        #                     self.screen = "measure_hr"
-        #                     view.display_center(config["screen_hr"])
-                    
-        #            #elif self.screen == ""
-
-                
                     
 
-if __name__ == "__main__":
+if __name__ == "__main__": # main block for testing
     App().run()

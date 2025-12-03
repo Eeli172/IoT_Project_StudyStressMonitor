@@ -15,12 +15,10 @@ class Mqtt:
 
 
 
-
         # this function is called automatically when a mqtt message is received
     def update_self(self, topic, msg): # update received values to self.received_values
         self.received_values["topic"] = topic.decode() # arrives as bytes -> make it a string
         self.received_values["msg"] = json.loads(msg.decode()) # payload is JSON -> decode + parse
-
 
 
 
@@ -34,7 +32,6 @@ class Mqtt:
         client.connect(clean_session=True) # establish the connection to broker
 
         return client
-
 
 
 
@@ -73,7 +70,6 @@ class Mqtt:
 
 
 
-
     def payload(self, data):
         # payload to send to broker
         if self.mode == "kubios":
@@ -102,7 +98,6 @@ class Mqtt:
             )
         
         return mqtt_payload
-
 
 
 
@@ -137,7 +132,6 @@ class Mqtt:
                 view.display_center(config["mqtt_error"])
 
 
-    
 
     def run(self, topic_pub, topic_sub, data):
         # connect to wlan

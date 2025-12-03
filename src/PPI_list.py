@@ -12,7 +12,7 @@ def measure():
     ppi_list = []
     first_signal = []
     max_jump_pct = 0.20 # %  # allowed change between two consecutive intervals
-    last_interval = 1
+    last_interval = 1 # interval from earlier iteration
     last_peak_index = None
     index = 0
     data_previous = None
@@ -101,7 +101,7 @@ def measure():
 
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # main block for testing
     ppi_list = measure()
     mean_ppi = sum(ppi_list) / len(ppi_list)
 

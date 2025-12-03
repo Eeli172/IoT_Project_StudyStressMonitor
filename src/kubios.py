@@ -16,7 +16,6 @@ class Kubios:
 
     def get_data(self):
         self.ppi_list = measure()
-        # self.ppi_list = [800,800,800,800,800,800,800,800,800,800,800]
 
 
     def run(self):
@@ -65,6 +64,6 @@ class Kubios:
                         button_pressed = True
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # main block for testing
     k = Kubios()
     k.run()

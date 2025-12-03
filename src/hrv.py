@@ -121,6 +121,6 @@ class Hrv:
 
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # main block for testing
     hrv = Hrv()
     hrv.run()
