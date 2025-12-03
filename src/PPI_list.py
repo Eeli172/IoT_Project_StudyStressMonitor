@@ -9,12 +9,14 @@ def measure():
     sensor.start()
     
     peaks = []
+    intervals = []
     first_signal = []
     last_peak_index = None
     index = 0
     data_previous = None
     slope_previous = None
     slope = 0
+    kubios_min_length = 11
 
     printed = False
     while True:
@@ -51,7 +53,7 @@ def measure():
     
     
     measure_time = time.ticks_ms()
-    while time.ticks_diff(time.ticks_ms(), measure_time) < 32000: # 32000 = 32 sekuntia
+    while time.ticks_diff(time.ticks_ms(), measure_time) < 30000 or len(intervals) < kubios_min_length: # 30000 = 30 sekuntia
         if printed == False:
             print("Looking for peaks...")
             printed = True
@@ -65,27 +67,23 @@ def measure():
                 
                 if slope_previous is not None:
                     if slope < 0 and slope_previous >= 0 and data_previous > THRESHOLD: # the previous sign must be positive and data and the value must be greater than THRESHOLD 
-                            if last_peak_index is None or index - last_peak_index >= MIN_PEAK_DIST: # checking that the interval is not too small
-                                peaks.append((data_previous, index-1)) # add the peak value and its index
-                                last_peak_index = index-1
+                        if last_peak_index is None or index - last_peak_index >= MIN_PEAK_DIST: # checking that the interval is not too small
+                            peaks.append((data_previous, index-1)) # add the peak value and its index
+                            last_peak_index = index-1
+                            if len(peaks) >= 2:
+                                interval = peaks[-1][1] - peaks[-2][1] # is selected index in peaks list and its difference
+                                if 120 <= interval <= 250:
+                                    intervals.append(interval*4)
+
                 slope_previous = slope
             data_previous = data
             
         
-    intervals = []
-    for i in range(len(peaks)-1):
-        interval = peaks[i+1][1] - peaks[i][1] # is selected index in peaks list and its difference
-        if 120 <= interval <= 250:  
-            intervals.append(interval)
-            
     
     sensor.stop()
 
-    result = []
-    for interval in intervals:
-        result.append(interval*4)
 
-    return result
+    return intervals
 
 
 

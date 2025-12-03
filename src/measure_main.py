@@ -38,7 +38,7 @@ def measure(sensor, encoder):
             printed = True
 
         if sensor.fifo.has_data():
-            if sensor.fifo.get() > 1000:  # Signal stabilization
+            if 40000 > sensor.fifo.get() > 20000: # Signal stabilization
                 printed = False
                 break
         time.sleep_ms(2)
