@@ -7,14 +7,14 @@ from hardware import Encoder
 
 class Kubios:
     def __init__(self):
-        self.mode = "kubios"
         self.ppi_list  = []
-        self.mqtt = Mqtt("kubios")
-        self.topic_pub = config["broker"]["kubios_pub"]
-        self.topic_sub = config["broker"]["kubios_sub"]
+        self.mode = "kubios"                            # mode for mqtt instance
+        self.mqtt = Mqtt(self.mode)                     # define mqtt instance
+        self.topic_pub = config["broker"]["kubios_pub"] # publish topic - (config.json)
+        self.topic_sub = config["broker"]["kubios_sub"] # subscribe topic (config.json)
 
 
-    def get_data(self):
+    def get_data(self): # gather ppi -data
         self.ppi_list = measure()
 
 
@@ -30,18 +30,17 @@ class Kubios:
                     button_pressed = True
 
 
-        print("FIFO HAS DATA: ", encoder.fifo.has_data())
-        # plot on oled AND get data
+        # plot on oled AND get ppi data
         display_center(["Collecting", " data.."])
         self.get_data()
 
 
-        # plot on oled AND send data to broker
+        # plot on oled AND send data to broker AND wait for the results to be returned
         display_center(["Sending data.."])
         result = self.mqtt.run(self.topic_pub, self.topic_sub, self.ppi_list)
 
 
-        # plot results on oled
+        # plot the results on oled
         display_left([
             f"MEAN HR: {int(result["msg"]["data"]["analysis"]["mean_hr_bpm"])}", 
             f"MEAN PPI: {int(result["msg"]["data"]["analysis"]["mean_rr_ms"])}", 
@@ -50,6 +49,7 @@ class Kubios:
             f"SNS: {result["msg"]["data"]["analysis"]["sns_index"]:.3f}", 
             f"PNS: {result["msg"]["data"]["analysis"]["pns_index"]:.3f}"
         ])
+
 
         # drain fifo and return to menu when button is pressed
         while encoder.fifo.has_data():

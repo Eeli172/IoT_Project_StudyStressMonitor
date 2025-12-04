@@ -7,11 +7,11 @@ import view
 
 class Mqtt:
     def __init__(self, mode):
-        self.mode = mode
-        self.ppi_list = None
-        self.received_values = {"topic": None, "msg": None}
-        self.wlan = Wlan() # wlan class defined in config.py
-        self.client = None
+        self.mode = mode            # "kubios" or "hrv" - small changes on the logic
+        # self.ppi_list = None        # placeholder for ppi_list
+        self.received_values = {"topic": None, "msg": None} # placeholder for message to be received later from mqtt broker
+        self.wlan = Wlan()          # wlan instance
+        self.client = None          # placeholder for mqtt client
 
 
 
@@ -35,44 +35,34 @@ class Mqtt:
 
 
 
-    def add_device(self):
-        mqtt_payload = (
+    def add_device(self): # add device to the broker's database by mac if it is not found already
+
+        mqtt_payload = ( # create the payload 
             '{'
                 '"mac": "' + self.wlan.mac + '",' 
                 '"device_name": "' + self.wlan.mac + ' pico"'
             '}'
         )
-        try:
+
+
+        try: # try to send the payload to broker by mqtt 
             self.client.publish(b'database/devices/add', mqtt_payload)
-        except Exception as e:
+
+        except Exception as e: # in case of error plot on oled and print on terminal
             view.display_center(config["mqtt_error"])
             print("Failed to send request:".upper(), e)
 
-        received = False # have we received a response from broker?  -  False = no
-        correct_response = False # was the recently received response meant for us?  -  False = no
 
-        while not correct_response:
-            try:
-                if not received:
-                    self.client.wait_msg()   # This will block until a message arrives - triggers callback
-                    received = True
+        # wait for response and confirm it is for us before continuing
+        self.check_response()
 
-                # check if message actually belongs to us by comparing mac addresses
-                elif self.received_values["msg"] != None:
-                    if self.received_values["msg"]["mac"] == self.wlan.mac:
-                        correct_response = True # we got our response
-                    else: 
-                        received = False # we got someone else's response, let's wait for a new response
-
-
-            except Exception as e:
-                print("Error while waiting for message:".upper(), e)
 
 
 
     def payload(self, data):
         # payload to send to broker
-        if self.mode == "kubios":
+
+        if self.mode == "kubios": # payload if it's for kubios analysis
             print("KUBIOS PAYLOAD")
             mqtt_payload = (
                 '{'
@@ -83,7 +73,7 @@ class Mqtt:
                 '}'
             )
 
-        elif self.mode == "hrv":
+        elif self.mode == "hrv": # payload if it's for saving hrv measurements
             print("HRV PAYLOAS")
             self.add_device()
             mqtt_payload = (
@@ -109,27 +99,23 @@ class Mqtt:
 
         while not correct_response:
             try:
-                print(1)
                 if not received:
-                    print("Waiting for a response".upper())
                     self.client.wait_msg()   # This will block until a message arrives - triggers callback
-                    print(3)
                     received = True
 
                 # check if message actually belongs to us by comparing mac addresses
                 if self.received_values["msg"] != None:
                     print(4, self.received_values)
                     if self.received_values["msg"]["mac"] == self.wlan.mac:
-                        print(5)
                         correct_response = True # we got our response
                     else: 
-                        print(6)
                         received = False # we got someone else's response, let's wait for a new response
 
 
             except Exception as e:
                 print("Error while waiting for message:".upper(), e)
                 view.display_center(config["mqtt_error"])
+                raise SystemExit
 
 
 

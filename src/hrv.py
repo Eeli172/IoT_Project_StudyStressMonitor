@@ -9,29 +9,29 @@ from ppi_list import measure
 
 class Hrv:
     def __init__(self):
-        self.ppi = []
+        self.ppi = []               # placeholder
         self.payload = {
-            "mean_ppi": None, # mean PPI (ms)
-            "mean_hr": None, # mean heart rate (bpm)
-            "rmssd": None, # root mean square of successive differences
-            "sdnn": None # standard deviation of NN intervals
+            "mean_ppi": None,       # mean PPI (ms)
+            "mean_hr": None,        # mean heart rate (bpm)
+            "rmssd": None,          # root mean square of successive differences
+            "sdnn": None            # standard deviation of NN intervals
         }
-        # define mqtt connection
-        self.mqtt = Mqtt("hrv")
+        
+        self.mqtt = Mqtt("hrv")     # define mqtt instance
 
-        self.topic_pub = config["broker"]["add_record"]
-        self.topic_sub = config["broker"]["topic_response"]
+        self.topic_pub = config["broker"]["add_record"]     # publish topic - (config.json)
+        self.topic_sub = config["broker"]["topic_response"] # subscribe topic (config.json)
 
 
 
-    def get_ppi(self):
-        self.ppi = measure()
-        self.payload["timestamp"] = time.time()
+    def get_data(self): 
+        self.ppi = measure()                    # gather ppi -data
+        self.payload["timestamp"] = time.time() # get timestamp for the payload
 
 
 
     def calc_hrv(self):
-        self.get_ppi()
+        self.get_data() # get ppi data for hrv calculations
 
         ####################### MEAN PPI #####################
         self.payload["mean_ppi"] = sum(self.ppi) / len(self.ppi) # calculate mean ppi
@@ -88,7 +88,7 @@ class Hrv:
                     button_pressed = True
 
 
-        # plot on oled AND get data
+        # plot on oled AND get hrv data
         display_center(["Collecting", " data.."])
         self.calc_hrv()
 
@@ -105,6 +105,7 @@ class Hrv:
             'RMSSD:' + str(int(self.payload["rmssd"])),
             'SDNN:' + str(int(self.payload["sdnn"]))
         ])
+
 
         # drain fifo and return to menu when button pressed
         while encoder.fifo.has_data():
