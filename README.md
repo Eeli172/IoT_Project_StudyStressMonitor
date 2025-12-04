@@ -12,9 +12,9 @@
         - data -> pin 26
 - A rotary encoder with push button 
     - CONNECTION: 
-        - Channel A -> pin 10 
-        - Channel B -> pin 11 
-        - Button -> pin 12
+        - channel A -> pin 10 
+        - channel B -> pin 11 
+        - button -> pin 12
 - A USB cable and a computer.
 - Kubios proxy ip/port.
 - Wifi ssid and password.
@@ -28,9 +28,9 @@
 3) Copy the code to the Pico
 - Connect the Pico to your computer with USB.
 - On your computer navigate into the HeartRateMonitor-folder and run: 
-    `install.cmd`   on Windows 
-        OR 
-    `install.sh`    on Linux/Mac
+    - on Windows: `install.cmd`    
+        \nOR 
+    - on Linux/Mac: `install.sh`    
 
 4) Run the program
 - Start the app by restarting your device (Pico)
