@@ -36,11 +36,10 @@
 - Use the rotary encoder and button on the device to choose a menu item:
   - `1. MEASURE HR` — measure heart rate.
   - `2. BASIC HRV`  — compute HRV locally and send a record to mqtt broker to save into a database.
-  - `3. KUBIOS`     — send PPI to Kubios proxy and get analysis back -> plot on screen
-  - `4. HISTORY`    — locally saved three last measurements to be checked later
+  - `3. KUBIOS`     — send PPI to Kubios proxy and get analysis back.
+  - `4. HISTORY`    — locally saved three last measurements to be checked later.
 
 5) Debugging tips (if it doesn't work)
-- If Wi‑Fi does not connect: check `src/config.json` for typos in SSID/password.
+- If Wi‑Fi or MQTT does not connect: check `src/config.json` for typos.
 - If Kubios returns `Invalid request.`:
-    - Wait 1 second and try again (the server may be busy).
-- If you still need help: copy the printed output and share the logs (timestamps and responses).
+    - Try again (the server may be busy)
