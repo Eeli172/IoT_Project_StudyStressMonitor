@@ -10,6 +10,7 @@
     ["kubios.py", "http://localhost:8000/src/kubios.py"],
     ["hrv.py", "http://localhost:8000/src/hrv.py"],
     ["ppi_list.py", "http://localhost:8000/src/ppi_list.py"],
+    ["measure.py", "http://localhost:8000/src/measure.py"],
 
 
     ["lib/filefifo.py", "http://localhost:8000/lib/filefifo.py"],	
