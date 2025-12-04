@@ -29,7 +29,6 @@
 - Connect the Pico to your computer with USB.
 - On your computer navigate into the HeartRateMonitor-folder and run: 
     - on Windows: `install.cmd`    
-        \nOR 
     - on Linux/Mac: `install.sh`    
 
 4) Run the program
