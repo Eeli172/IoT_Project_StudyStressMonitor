@@ -4,8 +4,8 @@
 1) What you need
 - A Raspberry Pi Pico with MicroPython installed.
 - SSD1306 OLED display - CONNECTION: 
-        - scl -> pin 15 
-        - sda -> pin 14
+    - scl -> pin 15 
+    - sda -> pin 14
 - A photoplethysmography pulse sensor. Built and tested with Crowtail's model CT010712P - CONNECTION: 
         - data -> pin 26
 - A rotary encoder with push button - CONNECTION: 
