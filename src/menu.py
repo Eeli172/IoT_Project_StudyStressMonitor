@@ -6,6 +6,7 @@ from config import config
 from kubios import Kubios
 from hrv import Hrv
 from measure import measure
+from history import History
 
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
@@ -13,12 +14,16 @@ micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
 
 
 class Menu:
-    def __init__(self, oled, items):
-        self.oled = oled # instance of oled
-        self.items = items # menu options
+    def __init__(self):
+        self.oled = hardware.oled # instance of oled
+        self.items = config["menu_items"] # menu options
         self.index = 0 # encoder's +1's and -1's are added to this variable
         self.pos = 0 # position in menu - index divided by rotation_sensivity defined in config.json
         self.change = True # helper to tell if any change happened; do we need to refresh the oled 
+
+
+    def update_items(self, items):
+        self.items = items
 
 
     def draw(self): 
@@ -37,9 +42,6 @@ class Menu:
 
 class App:
     def __init__(self):
-        # Display 
-        self.oled = hardware.oled
-
         # Encoder + push button
         self.encoder = hardware.Encoder()
         
@@ -47,7 +49,10 @@ class App:
         self.sensor = hardware.Sensor()
         
         # Menu items
-        self.menu = Menu(self.oled, config["menu_items"])
+        self.menu = Menu()
+
+        # history
+        self.history = History(self.encoder)
         
 
     def run(self):
@@ -105,8 +110,7 @@ class App:
                             
 
                     elif self.menu.pos == 3: # HISTORY ############################
-                        view.display_center(config["screen"][1])
-                        time.sleep(1)
+                        self.history.run()
 
 
                     while not self.encoder.button.value(): # drain fifo before returning to menu

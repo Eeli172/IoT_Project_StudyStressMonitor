@@ -1,6 +1,5 @@
 import json
 import network
-import view
 
 
 
@@ -31,6 +30,8 @@ class Wlan: # wlan class
                 
             except Exception as e: # in case something goes wrong
                 print("exception occurred while connecting to wlan:".upper(), e)
+                # import view here to avoid a circular import at module level                
+                import view
                 view.display_center(["WLAN", "CONNECTION", "FAILED","","TRYING AGAIN"])
 
         # print ip when connected

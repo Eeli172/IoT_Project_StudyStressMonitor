@@ -1,4 +1,5 @@
 from config import config
+from history import History
 from mqtt import Mqtt
 import time
 from hardware import Encoder
@@ -16,8 +17,9 @@ class Hrv:
             "rmssd": None,          # root mean square of successive differences
             "sdnn": None            # standard deviation of NN intervals
         }
-        
+        self.encoder = Encoder()
         self.mqtt = Mqtt("hrv")     # define mqtt instance
+        self.history = History(self.encoder)
 
         self.topic_pub = config["broker"]["add_record"]     # publish topic - (config.json)
         self.topic_sub = config["broker"]["topic_response"] # subscribe topic (config.json)
@@ -25,6 +27,7 @@ class Hrv:
 
 
     def get_data(self): 
+        # self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
         self.ppi = measure()                    # gather ppi -data
         self.payload["timestamp"] = time.time() # get timestamp for the payload
 
@@ -79,12 +82,11 @@ class Hrv:
     def run(self):
         # plot on oled AND wait until button is pressed
         display_center(["TO START HRV-", "MEASUREMENT", "", "1. PLACE THUMB", "ON SENSOR", "2. PRESS BUTTON"])
-        encoder = Encoder()
         button_pressed = False
         
         while not button_pressed: 
-            if encoder.fifo.has_data():
-                if encoder.fifo.get() == 0:
+            if self.encoder.fifo.has_data():
+                if self.encoder.fifo.get() == 0:
                     button_pressed = True
 
 
@@ -106,17 +108,18 @@ class Hrv:
             'SDNN:' + str(int(self.payload["sdnn"]))
         ])
 
+        self.history.add_session(self.payload)
 
         # drain fifo and return to menu when button pressed
-        while encoder.fifo.has_data():
-            encoder.fifo.get()
+        while self.encoder.fifo.has_data():
+            self.encoder.fifo.get()
 
         button_pressed = False
 
         while not button_pressed:
-            if encoder.fifo.has_data():
-                while encoder.fifo.has_data():
-                    if encoder.fifo.get() == 0:
+            if self.encoder.fifo.has_data():
+                while self.encoder.fifo.has_data():
+                    if self.encoder.fifo.get() == 0:
                         button_pressed = True
 
 
