@@ -1,7 +1,6 @@
 import json
 import network
 import ntptime
-import machine
 import time
 
 
@@ -46,6 +45,7 @@ class Wlan: # wlan class
     def sync_time(self):
         ntptime.host = "fi.pool.ntp.org"
         ntptime.settime()   # now the Pico's RTC is in UTC
+        
 
 
     def get_time(self):
@@ -72,10 +72,6 @@ class Wlan: # wlan class
 
 if __name__ == "__main__": # main block for testing
     w = Wlan()
+    print("   timestamp before sync:",time.time())
     w.connect()
-    print(time.time()+2208988800+2*3600)
-    years = 10//3
-    print(years)
-    # w.get_time()
-    # print(w.time)
-    # print("MAC: ", w.mac)
+    print("   timestamp after sync:",time.time())

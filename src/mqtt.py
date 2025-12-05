@@ -1,7 +1,6 @@
 from umqtt.simple import MQTTClient
 from config import config, Wlan
 import json
-import view
 
 
 
@@ -116,7 +115,7 @@ class Mqtt:
         # payload to send to broker
         if self.mode == "kubios": # payload if it's for kubios analysis
 
-            mqtt_payload = (
+            payload_dump = (
                 '{'
                 '"mac": "' + self.wlan.mac + '",'
                 '"type": "RRI",'
@@ -192,11 +191,9 @@ class Mqtt:
         # subscribe to response topic
         self.client.subscribe(topic_sub)
 
-
         # payload to send to broker
         mqtt_payload = self.payload(data)
         
-
         # try to publish the request
         try:
             self.client.publish(topic_pub, mqtt_payload)
