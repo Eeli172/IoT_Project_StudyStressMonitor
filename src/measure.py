@@ -3,11 +3,22 @@ from ssd1306 import SSD1306_I2C
 from piotimer import Piotimer
 from fifo import Fifo
 from config import config
+import hardware
 import time
 import micropython
 from hardware import Sensor
+from view import display_center
 
 micropython.alloc_emergency_exception_buf(200)
+
+def plot_bpm(bpm):
+    # show bpm on oled
+    bpm_int = int(bpm)
+    display_center([
+        "MEASURING HR",
+        "",
+        f"{bpm_int} BPM"
+    ])
 
 
 def measure(sensor, encoder):
@@ -129,5 +140,6 @@ def measure(sensor, encoder):
                     avg_int = sum(window) / len(window)  # calculating average value of 5 last intervals
                     bpm = 60 * SF / avg_int
                     print("Current bpm: ", bpm)
+                    plot_bpm(bpm)
                 else:
                     print("intervals:  ", intervals)
