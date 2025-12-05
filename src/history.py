@@ -76,7 +76,7 @@ class History:
     def make_items(self):
         self.menu.items = []
         for i in range(len(self.sessions)):
-            self.menu.items.append(f"{i+1}. {self.sessions[1]["timestamp"]}")
+            self.menu.items.append(f"{i+1}. {self.sessions[(i+1)*(-1)]["timestamp"]}")
         self.menu.items.append(str(len(self.menu.items)+1)+". BACK")
 
 
@@ -106,18 +106,20 @@ class History:
                     while self.encoder.button() == 0: # wait until button is released
                         while self.encoder.fifo.has_data(): # drain fifo
                             self.encoder.fifo.get()
+                            
+                            
                     print(self.menu.pos, len(self.menu.items)-1)
                     if self.menu.pos == len(self.menu.items)-1: # if last option (BACK) of the menu is chosen 
                         finished = True # quit to menu
 
                     else:
                         view.display_left([
-                            str(int(self.sessions[self.menu.pos]["timestamp"])),
+                            str(self.sessions[self.menu.pos*(-1)-1]["timestamp"]),
                             "",
-                            'MEAN HR:' + str(int(self.sessions[self.menu.pos]["mean_hr"])),
-                            'MEAN PPI:' + str(int(self.sessions[self.menu.pos]["mean_ppi"])),
-                            'RMSSD:' + str(int(self.sessions[self.menu.pos]["rmssd"])),
-                            'SDNN:' + str(int(self.sessions[self.menu.pos]["sdnn"]))
+                            'MEAN HR:' + str(int(self.sessions[self.menu.pos*(-1)-1]["mean_hr"])),
+                            'MEAN PPI:' + str(int(self.sessions[self.menu.pos*(-1)-1]["mean_ppi"])),
+                            'RMSSD:' + str(int(self.sessions[self.menu.pos*(-1)-1]["rmssd"])),
+                            'SDNN:' + str(int(self.sessions[self.menu.pos*(-1)-1]["sdnn"]))
                         ])
 
                         while self.encoder.button() == 1: # wait until button is pressed
@@ -132,7 +134,8 @@ class History:
 
 
 if __name__ == "__main__":
-    
-    history = History()
+    e=hardware.Encoder()
+
+    history = History(e)
     history.run()
 

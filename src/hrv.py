@@ -5,6 +5,7 @@ import time
 from hardware import Encoder
 from view import display_center, display_left
 from ppi_list import measure
+import ntptime
 
 
 
@@ -29,7 +30,8 @@ class Hrv:
     def get_data(self): 
         # self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
         self.ppi = measure()                    # gather ppi -data
-        self.payload["timestamp"] = time.time() # get timestamp for the payload
+
+        self.payload["timestamp"] = self.mqtt.wlan.get_time() # get timestamp for the payload
 
 
 
@@ -126,5 +128,14 @@ class Hrv:
 
 
 if __name__ == "__main__": # main block for testing
+    import ntptime
+    from config import Wlan
+
+    print(time.localtime())
+    mywifi = Wlan()
+    mywifi.connect()
+    print(time.localtime())
+
+    
     hrv = Hrv()
     hrv.run()

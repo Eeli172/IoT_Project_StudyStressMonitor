@@ -1,5 +1,8 @@
 import json
 import network
+import ntptime
+import machine
+import time
 
 
 
@@ -18,6 +21,7 @@ class Wlan: # wlan class
         self.mac = self.connection.config('mac').hex().upper()
         self.ssid = config["wifi"]["ssid"]
         self.password = config["wifi"]["password"]
+        self.time = None
 
 
     def connect(self): # method to connect to wlan
@@ -36,6 +40,35 @@ class Wlan: # wlan class
 
         # print ip when connected
         print("SELF.IP:", self.connection.ifconfig()[0])
+        
+        # synchronize time
+        self.sync_time()
+
+
+    def sync_time(self):
+        timezone_offset = 2*3600 # UTC+2
+        ntptime.host = "fi.pool.ntp.org"
+        ntptime.settime()   # now the Pico's RTC is in UTC
+
+        rtc = machine.RTC()
+        utc = time.time()
+        local = time.localtime(utc + timezone_offset)
+
+        rtc.datetime((
+            local[0],  # year
+            local[1],  # month
+            local[2],  # day
+            local[6],  # weekday (0 = Monday)
+            local[3],  # hours
+            local[4],  # minutes
+            local[5],  # seconds
+            0          # subseconds
+        ))
+
+    def get_time(self):
+        _time = time.localtime() # DD.MM.YYYY hh.mm.ss
+        return f"{_time[2]}.{_time[1]}.{_time[0]} {_time[3]}.{_time[4]}.{_time[5]}"
+
 
 
 
@@ -44,5 +77,6 @@ if __name__ == "__main__": # main block for testing
 
     w = Wlan()
     w.connect()
-
+    w.get_time()
+    print(w.time)
     print("MAC: ", w.mac)
