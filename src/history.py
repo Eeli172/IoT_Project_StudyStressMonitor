@@ -21,7 +21,6 @@ class Menu:
     def draw(self): 
         header = "    DATE   TIME"
         self.pos = self.index // config["rotation_sensivity"] # calculate menu position
-        print(self.items)
         view.draw_menu(self.pos, self.items, header) # draw the menu
 
 
@@ -39,11 +38,10 @@ class Menu:
 class History:
     def __init__(self, encoder):
         self.file = "history.json"      # name of the json file to save the data in
-        self.history_size = 3           # amount of saved sessions
+        self.history_size = 4           # amount of saved sessions
         self.sessions = []              # placeholder for sessions
         self.encoder = encoder        # instance of the encoder
         self.oled = hardware.oled
-        self.menu = Menu()
 
 
 
@@ -83,9 +81,11 @@ class History:
 
 
     def run(self):
+        self.menu = Menu()
         self.load_sessions()
         self.make_items()
         finished = False
+
         while not finished:
             if self.menu.change: # refresh menu screen after turning rotary encoder OR when returning back to menu
                 self.menu.draw()
@@ -110,7 +110,6 @@ class History:
                             self.encoder.fifo.get()
                             
                             
-                    print(self.menu.pos, len(self.menu.items)-1)
                     if self.menu.pos == len(self.menu.items)-1: # if last option (BACK) of the menu is chosen 
                         finished = True # quit to menu
 

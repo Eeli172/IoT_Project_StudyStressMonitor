@@ -23,15 +23,15 @@ class Hrv:
         self.history = History(self.encoder)
 
         self.topic_pub = config["broker"]["add_record"]     # publish topic - (config.json)
-        self.topic_sub = config["broker"]["topic_response"] # subscribe topic (config.json)
+        self.topic_sub = config["broker"]["db_response"] # subscribe topic (config.json)
 
 
 
     def get_data(self): 
         # self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
         self.ppi = measure()                    # gather ppi -data
-
-        self.payload["timestamp_long"], self.payload["timestamp_short"] = self.mqtt.wlan.get_time() # get timestamp for the payload
+        self.mqtt.wlan.get_time()
+        self.payload["timestamp_long"], self.payload["timestamp_short"] = self.mqtt.wlan.format_time(self.mqtt.wlan.timestamp) # get timestamp for the payload
 
 
 
@@ -128,14 +128,6 @@ class Hrv:
 
 
 if __name__ == "__main__": # main block for testing
-    import ntptime
-    from config import Wlan
-
-    print(time.localtime())
-    mywifi = Wlan()
-    mywifi.connect()
-    print(time.localtime())
-
     
     hrv = Hrv()
     hrv.run()

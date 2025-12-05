@@ -40,7 +40,9 @@
         "kubios_pub": "kubios/request",
         "kubios_sub": "kubios/response",
         "add_record": "database/records/add",
-        "topic_response": "database/response"
+        "add_patient": "database/patients/add",
+        "list_patients": "database/patients/list",
+        "db_response": "database/response"
     },
     
     "debug": true,

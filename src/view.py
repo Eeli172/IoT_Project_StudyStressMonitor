@@ -48,7 +48,7 @@ def draw_menu(index, items, header = ""): # menu view by index for pointer and l
 
 
             if items[i] != items[-1]:
-                hardware.oled.text(f'{cursor}{items[i]}', 0, int((hardware.oled_height - len(items) * 10) / 2) + i * 10)
+                hardware.oled.text(f'{cursor}{items[i]}', 0, 12 + i * 10)
             else:
                 hardware.oled.text(f'{cursor}{items[i]}', 0, 56)
 

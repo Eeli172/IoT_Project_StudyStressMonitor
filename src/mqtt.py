@@ -49,8 +49,62 @@ class Mqtt:
             self.client.publish(b'database/devices/add', mqtt_payload)
 
         except Exception as e: # in case of error plot on oled and print on terminal
-            view.display_center(config["mqtt_error"])
             print("Failed to send request:".upper(), e)
+            raise Exception("Failed adding device")
+
+
+        # wait for response and confirm it is for us before continuing
+        self.check_response()
+
+
+    def add_patient(self):
+        self.patient_list()
+        name = "Eeli"
+        id = 0
+        found = False
+        for i in self.received_values["msg"]["data"]:
+            if i["Name"] == name:
+                found = True
+                id = i["ID"]
+        
+        if not found:
+            mqtt_payload = ( # create the payload 
+                '{'
+                    '"mac": "' + self.wlan.mac + '",' 
+                    '"patient_name": "' + name + '"'
+                '}'
+            )
+
+            try: # try to send the payload to broker by mqtt 
+                self.client.publish(b'database/patients/add', mqtt_payload)
+
+            except Exception as e: # in case of error plot on oled and print on terminal
+                print("Failed to send request:".upper(), e)
+                raise Exception("Failed adding patient")
+
+
+            # wait for response and confirm it is for us before continuing
+            self.check_response()
+            
+            return self.received_values["msg"]["data"] # patient id
+
+        else:
+            print("This name is already in patient list with id:", id)
+            return id
+
+    def patient_list(self):
+        mqtt_payload = ( # create the payload 
+            '{'
+                '"mac": "' + self.wlan.mac + '"' 
+            '}'
+        )
+
+        try: # try to send the payload to broker by mqtt 
+            self.client.publish(b'database/patients/list', mqtt_payload)
+
+        except Exception as e: # in case of error plot on oled and print on terminal
+            print("Failed to send request:".upper(), e)
+            raise Exception("Failed adding patient")
 
 
         # wait for response and confirm it is for us before continuing
@@ -58,12 +112,10 @@ class Mqtt:
 
 
 
-
     def payload(self, data):
         # payload to send to broker
-
         if self.mode == "kubios": # payload if it's for kubios analysis
-            print("KUBIOS PAYLOAD")
+
             mqtt_payload = (
                 '{'
                 '"mac": "' + self.wlan.mac + '",'
@@ -74,20 +126,23 @@ class Mqtt:
             )
 
         elif self.mode == "hrv": # payload if it's for saving hrv measurements
-            print("HRV PAYLOAS")
             self.add_device()
-            mqtt_payload = (
-                '{'
-                '"mac": "' + self.wlan.mac + '",'
-                '"timestamp": "' + str(data["timestamp_long"]) + '",'
-                '"mean_hr": "' + str(data["mean_hr"]) + '",'
-                '"mean_ppi": "' + str(data["mean_ppi"]) + '",'
-                '"rmssd": "' + str(data["rmssd"]) + '",'
-                '"sdnn": "' + str(data["sdnn"]) + '"'
-                '}'
-            )
+            _id = self.add_patient()
+
+            mqtt_payload = {
+                "mac": self.wlan.mac,
+                "timestamp": self.wlan.timestamp,
+                "mean_hr": data["mean_hr"],
+                "mean_ppi": data["mean_ppi"],
+                "rmssd": data["rmssd"],
+                "sdnn": data["sdnn"],
+                "patient_id": _id
+            }
+
+            payload_dump = json.dumps(mqtt_payload)
+
         
-        return mqtt_payload
+        return payload_dump
 
 
 
@@ -105,7 +160,6 @@ class Mqtt:
 
                 # check if message actually belongs to us by comparing mac addresses
                 if self.received_values["msg"] != None:
-                    print(4, self.received_values)
                     if self.received_values["msg"]["mac"] == self.wlan.mac:
                         correct_response = True # we got our response
                     else: 
@@ -114,8 +168,7 @@ class Mqtt:
 
             except Exception as e:
                 print("Error while waiting for message:".upper(), e)
-                view.display_center(config["mqtt_error"])
-                raise SystemExit
+                raise Exception("Failed checking the response")
 
 
 
@@ -133,7 +186,7 @@ class Mqtt:
             self.client = self.connect_mqtt()
         except Exception as e:
             print("Exception while connexting to kubios proxy: ".upper(), e)
-            view.display_center(config["mqtt_error"])
+            raise Exception("Failed connecting to mqtt broker")
 
 
         # subscribe to response topic
@@ -148,14 +201,12 @@ class Mqtt:
         try:
             self.client.publish(topic_pub, mqtt_payload)
         except Exception as e:
-            view.display_center(config["mqtt_error"])
             print("Failed to send request:".upper(), e)
+            raise Exception("Failed publishing the request")
 
 
         # wait for response and confirm it is for us before continuing
         self.check_response()
-
-
         # disconnect mqtt client
         self.client.disconnect()
 
@@ -167,9 +218,14 @@ class Mqtt:
 if __name__ == "__main__": # main block for testing
     ppi = [828, 836, 852, 760, 800, 796, 856, 824, 808, 776, 724, 816, 800, 812, 812, 812, 756, 820, 812, 800]
 
-    mqtt_kubios = Mqtt("kubios")
+    mqtt_kubios = Mqtt("hrv")
 
-    result = mqtt_kubios.run(config["broker"]["kubios_pub"],config["broker"]["kubios_sub"],ppi)
+    x = {
+        "mac": mqtt_kubios.wlan.mac,
+        "patient_name": "Sami"
+    }
 
+    result = mqtt_kubios.run(config["broker"]["add_patient"],config["broker"]["db_response"],x)
+    
     print(result)
     
