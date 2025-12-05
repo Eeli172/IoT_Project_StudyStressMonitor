@@ -19,7 +19,7 @@ class Menu:
 
 
     def draw(self): 
-        header = "    DATE  TIME"
+        header = "    DATE   TIME"
         self.pos = self.index // config["rotation_sensivity"] # calculate menu position
         print(self.items)
         view.draw_menu(self.pos, self.items, header) # draw the menu

@@ -66,8 +66,15 @@ class Wlan: # wlan class
         ))
 
     def get_time(self):
-        _time = time.localtime() # DD.MM.YYYY hh.mm.ss
-        return f"{_time[2]}.{_time[1]}.{_time[0]} {_time[3]}.{_time[4]}", f"{_time[2]}.{_time[1]}. {_time[3]}.{_time[4]}"
+        _time = time.localtime() # returns long format "DD.MM.YYYY hh.mm" and short format "DD.MM. hh.mm"  
+        time_mod = []
+        for i in range(len(_time)):
+            if len(str(_time[i])) == 1:
+                time_mod.append(f"0{_time[i]}")
+            else:
+                time_mod.append(str(_time[i]))
+
+        return f"{time_mod[2]}.{time_mod[1]}.{time_mod[0]} {time_mod[3]}.{time_mod[4]}", f"{time_mod[2]}.{time_mod[1]}. {time_mod[3]}.{time_mod[4]}"
 
 
 
