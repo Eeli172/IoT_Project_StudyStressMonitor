@@ -79,7 +79,7 @@ class Mqtt:
             mqtt_payload = (
                 '{'
                 '"mac": "' + self.wlan.mac + '",'
-                '"timestamp": "' + str(data["timestamp"]) + '",'
+                '"timestamp": "' + str(data["timestamp_long"]) + '",'
                 '"mean_hr": "' + str(data["mean_hr"]) + '",'
                 '"mean_ppi": "' + str(data["mean_ppi"]) + '",'
                 '"rmssd": "' + str(data["rmssd"]) + '",'

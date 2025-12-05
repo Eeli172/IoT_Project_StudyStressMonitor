@@ -67,7 +67,7 @@ class Wlan: # wlan class
 
     def get_time(self):
         _time = time.localtime() # DD.MM.YYYY hh.mm.ss
-        return f"{_time[2]}.{_time[1]}.{_time[0]} {_time[3]}.{_time[4]}.{_time[5]}"
+        return f"{_time[2]}.{_time[1]}.{_time[0]} {_time[3]}.{_time[4]}", f"{_time[2]}.{_time[1]}. {_time[3]}.{_time[4]}"
 
 
 

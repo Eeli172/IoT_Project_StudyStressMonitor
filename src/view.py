@@ -33,16 +33,29 @@ def display_left(list_of_rows): # list of rows, max 16 characters/row AND max 6 
 
 
 
-def draw_menu(index, items): # menu view by index for pointer and list of menu items - max 6 items
+def draw_menu(index, items, header = ""): # menu view by index for pointer and list of menu items - max 6 items
+
     hardware.oled.fill(0) # empty oled
 
+    hardware.oled.text
 
     for i in range(len(items)): # draw menu options and a cursor next to the right option
 
         cursor = ">" if index == i else " "
+        if header != "":
+            if i==0: # add header and move the menu options down
+                hardware.oled.text(header, 0, 0)
 
-        hardware.oled.text(f'{cursor}{items[i]}', 0, int((hardware.oled_height - len(items) * 10) / 2) + i * 10)
-        
+
+            if items[i] != items[-1]:
+                hardware.oled.text(f'{cursor}{items[i]}', 0, int((hardware.oled_height - len(items) * 10) / 2) + i * 10)
+            else:
+                hardware.oled.text(f'{cursor}{items[i]}', 0, 56)
+
+    
+        else: # plot menu options without header
+            hardware.oled.text(f'{cursor}{items[i]}', 0, int((hardware.oled_height - len(items) * 10) / 2) + i * 10)
+
 
     hardware.oled.show() # plot on oled
 

@@ -19,8 +19,10 @@ class Menu:
 
 
     def draw(self): 
+        header = "    DATE  TIME"
         self.pos = self.index // config["rotation_sensivity"] # calculate menu position
-        view.draw_menu(self.pos, self.items) # draw the menu
+        print(self.items)
+        view.draw_menu(self.pos, self.items, header) # draw the menu
 
 
     def move(self, step): # move in menu - method is called when encoder is turned
@@ -76,8 +78,8 @@ class History:
     def make_items(self):
         self.menu.items = []
         for i in range(len(self.sessions)):
-            self.menu.items.append(f"{i+1}. {self.sessions[(i+1)*(-1)]["timestamp"]}")
-        self.menu.items.append(str(len(self.menu.items)+1)+". BACK")
+            self.menu.items.append(f"{i+1}. {self.sessions[(i+1)*(-1)]["timestamp_short"]}")
+        self.menu.items.append("BACK")
 
 
     def run(self):
@@ -114,7 +116,7 @@ class History:
 
                     else:
                         view.display_left([
-                            str(self.sessions[self.menu.pos*(-1)-1]["timestamp"]),
+                            str(self.sessions[self.menu.pos*(-1)-1]["timestamp_long"]),
                             "",
                             'MEAN HR:' + str(int(self.sessions[self.menu.pos*(-1)-1]["mean_hr"])),
                             'MEAN PPI:' + str(int(self.sessions[self.menu.pos*(-1)-1]["mean_ppi"])),
