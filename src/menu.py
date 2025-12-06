@@ -7,6 +7,7 @@ from kubios import Kubios
 from hrv import Hrv
 from measure import measure
 from history import History
+from measure_hr import Measure_hr 
 
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
@@ -54,6 +55,9 @@ class App:
         # history
         self.history = History(self.encoder)
         
+        # measuring
+        self.measure_hr = Measure_hr(self.menu, self.encoder, self.sensor)
+        
 
     def run(self):
         while 1:
@@ -61,6 +65,7 @@ class App:
                 self.menu.draw()
                 self.menu.change = False
                 self.encoder = hardware.Encoder()
+                self.measure_hr.encoder = self.encoder
             
             
             if self.encoder.fifo.has_data(): # button pressed OR encoder turned
@@ -82,22 +87,7 @@ class App:
 
 
                     if self.menu.pos == 0: # MEASURE HR ############################
-                        while self.encoder.fifo.has_data():
-                            self.encoder.fifo.get()
-                        view.display_center(config["screen"][0])
-                        time.sleep(1)
-                        while not (self.encoder.fifo.has_data() and self.encoder.fifo.get() == 0): # waiting until the user presses the button
-                            time.sleep_ms(10)
-                        while self.encoder.button() == 0: # wait until button is released
-                            time.sleep_ms(10)
-                        while self.encoder.fifo.has_data(): # wait until fifo is empty
-                            self.encoder.fifo.get()
-                            
-                        self.sensor.start()
-                        result = measure(self.sensor, self.encoder)
-                        if result == "abort":
-                            self.menu.change = True
-                            self.sensor.stop()        
+                        self.measure_hr.run()
                                                                 
 
 
