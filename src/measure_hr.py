@@ -43,9 +43,14 @@ def plot_bpm(bpm):
         f"{bpm_int} BPM"
     ])
 
+def led_off(t):
+    led.off()
 
 def measure(sensor, encoder):
-
+    
+    led = Pin(21, Pin.OUT)
+    led_off_time = None
+    
     all_data = []
 
     SF = 250  # frequency
@@ -121,6 +126,11 @@ def measure(sensor, encoder):
     while True:
         time.sleep_ms(2)
         
+        if led_off_time is not None: # checks whether a led needs to be turned off
+            if time.ticks_diff(time.ticks_ms(), led_off_time) >= 0:
+                led.off()
+                led_off_time = None
+
         if encoder.fifo.has_data(): # exit from the loop in the menu
             preasured = encoder.fifo.get()
             if preasured == 0:
@@ -142,6 +152,9 @@ def measure(sensor, encoder):
                         if last_peak_index is None or index - last_peak_index >= MIN_PEAK_DIST:  # checking that the interval is not too small
                             peaks.append((data_previous, index - 1))  # add the peak value and its index
                             last_peak_index = index - 1
+                            led.on()
+                            led_off_time = time.ticks_ms() + 50 # 50 ms timer
+
 
                             if len(peaks) > 20:  # delete the oldest element of peaks
                                 peaks.pop(0)

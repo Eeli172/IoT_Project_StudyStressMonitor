@@ -5,7 +5,6 @@ import view
 from config import config
 from kubios import Kubios
 from hrv import Hrv
-from measure import measure
 from history import History
 from measure_hr import Measure_hr 
 
