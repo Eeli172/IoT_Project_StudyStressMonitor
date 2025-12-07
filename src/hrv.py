@@ -9,7 +9,7 @@ from ppi_list import measure
 
 
 class Hrv:
-    def __init__(self):
+    def __init__(self, wlan):
         self.ppi = []               # placeholder
         self.payload = {
             "mean_ppi": None,       # mean PPI (ms)
@@ -17,8 +17,9 @@ class Hrv:
             "rmssd": None,          # root mean square of successive differences
             "sdnn": None            # standard deviation of NN intervals
         }
+        self.wlan = wlan
+        self.mqtt = Mqtt(self.wlan, "hrv")     # define mqtt instance
         self.encoder = Encoder()
-        self.mqtt = Mqtt("hrv")     # define mqtt instance
         self.history = History(self.encoder)
 
         self.topic_pub = config["broker"]["add_record"]     # publish topic - (config.json)
@@ -29,8 +30,6 @@ class Hrv:
     def get_data(self): 
         # self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
         self.ppi = measure()                    # gather ppi -data
-        self.mqtt.wlan.get_time()
-        self.payload["timestamp_long"], self.payload["timestamp_short"] = self.mqtt.wlan.format_time(self.mqtt.wlan.timestamp) # get timestamp for the payload
 
 
 
@@ -94,6 +93,15 @@ class Hrv:
         # plot on oled AND get hrv data
         display_center(["Collecting", " data.."])
         self.calc_hrv()
+
+
+        # plot on oled AND connect to wlan
+        display_center(["Connecting"," wlan.."])
+        self.wlan.connect()
+
+        # get timestamp 
+        self.wlan.get_time()
+        self.payload["timestamp_long"], self.payload["timestamp_short"] = self.wlan.format_time(self.wlan.timestamp) 
 
 
         # plot on oled AND send data to broker

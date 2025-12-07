@@ -2,7 +2,7 @@ import hardware
 import micropython
 import time
 import view
-from config import config
+from config import Wlan, config
 from kubios import Kubios
 from hrv import Hrv
 from history import History
@@ -57,6 +57,9 @@ class App:
         # measuring
         self.measure_hr = Measure_hr(self.menu, self.encoder, self.sensor)
         
+        # wlan
+        self.wlan = Wlan()
+
 
     def run(self):
         while 1:
@@ -89,13 +92,12 @@ class App:
                         self.measure_hr.run()
                                                                 
 
-
                     elif self.menu.pos == 1: # BASIC HRV ############################
-                        Hrv().run()
+                        Hrv(self.wlan).run()
 
 
                     elif self.menu.pos == 2: # KUBIOS ############################
-                        Kubios().run()
+                        Kubios(self.wlan).run()
                             
 
                     elif self.menu.pos == 3: # HISTORY ############################

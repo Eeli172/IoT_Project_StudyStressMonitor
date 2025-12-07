@@ -6,13 +6,15 @@ from hardware import Encoder
 import time
 
 class Kubios:
-    def __init__(self):
+    def __init__(self, wlan):
         self.ppi_list  = []
         self.mode = "kubios"                            # mode for mqtt instance
-        self.mqtt = Mqtt(self.mode)                     # define mqtt instance
+        self.wlan = wlan
+        self.mqtt = Mqtt(self.wlan, self.mode)                     # define mqtt instance
         self.topic_pub = config["broker"]["kubios_pub"] # publish topic - (config.json)
         self.topic_sub = config["broker"]["kubios_sub"] # subscribe topic (config.json)
         self.success = 2
+
 
 
     def get_data(self): # gather ppi -data
@@ -30,6 +32,10 @@ class Kubios:
             if encoder.fifo.has_data():
                 if encoder.fifo.get() == 0:
                     button_pressed = True
+
+
+        # connect to wlan 
+        self.wlan.connect()
 
 
         # plot on oled AND get ppi data

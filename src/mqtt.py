@@ -5,11 +5,11 @@ import json
 
 
 class Mqtt:
-    def __init__(self, mode):
+    def __init__(self, wlan, mode):
         self.mode = mode            # "kubios" or "hrv" - small changes on the logic
-        # self.ppi_list = None        # placeholder for ppi_list
+        # self.ppi_list = None      # placeholder for ppi_list
         self.received_values = {"topic": None, "msg": None} # placeholder for message to be received later from mqtt broker
-        self.wlan = Wlan()          # wlan instance
+        self.wlan = wlan            # wlan instance
         self.client = None          # placeholder for mqtt client
 
 
@@ -172,10 +172,6 @@ class Mqtt:
 
 
     def run(self, topic_pub, topic_sub, data):
-        # connect to wlan
-        self.wlan.connect() 
-
-
         # reset previous values when running again
         self.received_values = {"topic": None, "msg": None}
 
