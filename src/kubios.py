@@ -34,13 +34,16 @@ class Kubios:
                     button_pressed = True
 
 
-        # connect to wlan 
-        self.wlan.connect()
-
-
         # plot on oled AND get ppi data
         display_center(["Collecting", " data.."])
         self.get_data()
+
+
+        # plot on oled 
+        display_center(["Sending data.."])
+
+        # connect to wlan
+        self.wlan.connect()
 
 
         # plot on oled AND send data to broker AND wait for the results to be returned

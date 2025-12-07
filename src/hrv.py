@@ -95,17 +95,17 @@ class Hrv:
         self.calc_hrv()
 
 
-        # plot on oled AND connect to wlan
-        display_center(["Connecting"," wlan.."])
+        # plot on oled 
+        display_center(["Sending data.."])
+
+        # connect to wlan
         self.wlan.connect()
 
         # get timestamp 
         self.wlan.get_time()
         self.payload["timestamp_long"], self.payload["timestamp_short"] = self.wlan.format_time(self.wlan.timestamp) 
 
-
-        # plot on oled AND send data to broker
-        display_center(["Sending data.."])
+        # send data to broker
         self.result = self.mqtt.run(self.topic_pub, self.topic_sub, self.payload)
 
 
