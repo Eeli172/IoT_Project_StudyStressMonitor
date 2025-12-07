@@ -92,8 +92,8 @@ def measure():
                 slope_previous = slope
             data_previous = data
             
-        
-    
+    print("Seconds:",time.ticks_diff(time.ticks_ms(), measure_time) / 1000)
+    print("PPIs:",len(ppi_list))
     sensor.stop() # stop gathering data into fifo
 
 
