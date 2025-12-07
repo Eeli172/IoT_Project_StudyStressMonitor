@@ -10,17 +10,6 @@
         "4. HISTORY"
     ],
 
-    "screen": [[
-        "START",
-        "MEASUREMENT",
-        "BY PRESSING",
-        "BUTTON"
-    ],[
-        "-----------",
-        "| HISTORY |",
-        "-----------"
-    ]],
-
     "mqtt_error": ["ERROR","","SENDING","","DATA"],
 
     "threshold": {
@@ -43,9 +32,5 @@
         "add_patient": "database/patients/add",
         "list_patients": "database/patients/list",
         "db_response": "database/response"
-    },
-    
-    "debug": true,
-
-    "kubios_enabled": false
+    }
 }

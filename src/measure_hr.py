@@ -19,7 +19,7 @@ class Measure_hr:
     def run(self):
         while self.encoder.fifo.has_data():
             self.encoder.fifo.get()
-        view.display_center(config["screen"][0])
+        view.display_center(["TO START", "MEASURING HR", "", "1. PLACE THUMB", "ON SENSOR", "2. PRESS BUTTON"])
         time.sleep(1)
         while not (self.encoder.fifo.has_data() and self.encoder.fifo.get() == 0): # waiting until the user presses the button
             time.sleep_ms(10)
@@ -27,7 +27,8 @@ class Measure_hr:
             time.sleep_ms(10)
         while self.encoder.fifo.has_data(): # wait until fifo is empty
             self.encoder.fifo.get()
-                            
+        
+        view.display_center(["Stabilizing"," signal.."])
         self.sensor.start()
         result = measure(self.sensor, self.encoder)
         if result == "abort":
@@ -123,6 +124,7 @@ def measure(sensor, encoder):
     last_print = time.ticks_ms()
     PRINT_INTERVAL = 3000  # bpm refresh rate
 
+    view.display_center(["Starting"," measurement.."])
     while True:
         time.sleep_ms(2)
         
@@ -135,7 +137,7 @@ def measure(sensor, encoder):
             preasured = encoder.fifo.get()
             if preasured == 0:
                 return "abort"
-        
+
         if printed == False:
             print("Looking for peaks...")
             printed = True
