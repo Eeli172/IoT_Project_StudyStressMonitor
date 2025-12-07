@@ -1,7 +1,9 @@
 {
     "sampling_rate_hz": 250,
     
-    "rotation_sensivity": 2, 
+    "rotation_sensivity": 2,
+    
+    "history_data": "history.json",
 
     "menu_items": [
         "1. MEASURE HR", 
@@ -10,14 +12,6 @@
         "4. HISTORY"
     ],
 
-    "mqtt_error": ["ERROR","","SENDING","","DATA"],
-
-    "threshold": {
-        "max": 30,
-        "min": 240,
-        "avg": 0
-    },
-    
     "wifi": {
         "ssid": "KME751_Group_4",
         "password": "Projectgroup4"

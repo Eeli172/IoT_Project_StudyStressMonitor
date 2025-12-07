@@ -37,10 +37,10 @@ class Menu:
 
 class History:
     def __init__(self, encoder):
-        self.file = "history.json"      # name of the json file to save the data in
-        self.history_size = 4           # amount of saved sessions
-        self.sessions = []              # placeholder for sessions
-        self.encoder = encoder        # instance of the encoder
+        self.file = config["history_data"]  # name of the json file to save the data in
+        self.history_size = 4               # amount of saved sessions
+        self.sessions = []                  # placeholder for sessions
+        self.encoder = encoder              # instance of the encoder
         self.oled = hardware.oled
 
 
