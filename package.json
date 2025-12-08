@@ -15,6 +15,8 @@
     ["history.json", "http://localhost:8000/src/history.json"],
     ["heart_test.py", "http://localhost:8000/src/heart_test.py"],
     ["heartbeat_animation.py", "http://localhost:8000/src/heartbeat_animation.py"],
+    ["logo_animation.py", "http://localhost:8000/src/logo_animation.py"],
+
 
 
     ["lib/filefifo.py", "http://localhost:8000/lib/filefifo.py"],	
