@@ -81,16 +81,18 @@ class History:
 
 
     def run(self):
-        self.menu = Menu()
-        self.load_sessions()
-        self.make_items()
-        finished = False
+        self.menu = Menu()      # instance for history menu
+        self.load_sessions()    # load data from history
+        self.make_items()       # make list of dates for history menu
+        finished = False        # helper boolean to end the loop when button is pressed
 
-        while not finished:
-            if self.menu.change: # refresh menu screen after turning rotary encoder OR when returning back to menu
-                self.menu.draw()
-                self.menu.change = False
-                self.encoder = hardware.Encoder()
+
+
+        while not finished:                         # until button is pressed
+            if self.menu.change:                    # refresh menu screen after turning rotary encoder OR when returning back to menu
+                self.menu.draw()                    # draw menu when something has changed <--> (button pressed OR encoder rotated)
+                self.menu.change = False            # reset menu change helper bool
+                self.encoder = hardware.Encoder()   # create encoder instance for menu
             
             
             if self.encoder.fifo.has_data(): # button pressed OR encoder turned
@@ -110,11 +112,12 @@ class History:
                             self.encoder.fifo.get()
                             
                             
-                    if self.menu.pos == len(self.menu.items)-1: # if last option (BACK) of the menu is chosen 
-                        finished = True # quit to menu
+                    if self.menu.pos == len(self.menu.items)-1: # if last option (= BACK TO MENU) of the menu is chosen 
+                        finished = True # stop the loop = quit to menu
+
 
                     else:
-                        view.display_left([
+                        view.display_left([ # display measure data on oled
                             str(self.sessions[self.menu.pos*(-1)-1]["timestamp_long"]),
                             "",
                             'MEAN HR:' + str(int(self.sessions[self.menu.pos*(-1)-1]["mean_hr"])),

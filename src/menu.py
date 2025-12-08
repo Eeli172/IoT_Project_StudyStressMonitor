@@ -22,10 +22,6 @@ class Menu:
         self.change = True # helper to tell if any change happened; do we need to refresh the oled 
 
 
-    def update_items(self, items):
-        self.items = items
-
-
     def draw(self): 
         self.pos = self.index // config["rotation_sensivity"] # calculate menu position
         view.draw_menu(self.pos, self.items) # draw the menu
