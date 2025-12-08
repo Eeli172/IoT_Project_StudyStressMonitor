@@ -6,7 +6,8 @@ from config import Wlan, config
 from kubios import Kubios
 from hrv import Hrv
 from history import History
-from measure_hr import Measure_hr 
+from measure_hr import Measure_hr
+from logo_animation import LogoAnimation
 
 
 micropython.alloc_emergency_exception_buf(200)   # For hard interrupts
@@ -58,6 +59,9 @@ class App:
 
 
     def run(self):
+        logo = LogoAnimation(delay = 80) # Show logo animatiom before menu
+        logo.run(cycles = 6) # cycles(6) * 4 frame * 80ms = show animation for 1,92 s
+        
         while 1:
             if self.menu.change: # refresh menu screen after turning rotary encoder OR when returning back to menu
                 self.menu.draw()
@@ -107,5 +111,5 @@ class App:
 
                     
 
-if __name__ == "__main__": # main block for testing
+if __name__ == "__main__":# main block for testing
     App().run()
