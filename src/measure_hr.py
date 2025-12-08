@@ -44,9 +44,6 @@ def plot_bpm(bpm):
         f"{bpm_int} BPM"
     ])
 
-def led_off(t):
-    led.off()
-
 def measure(sensor, encoder):
     
     led = Pin(21, Pin.OUT)
@@ -71,6 +68,7 @@ def measure(sensor, encoder):
         if encoder.fifo.has_data(): # exit from the loop in the menu
             preasured = encoder.fifo.get()
             if preasured == 0:
+                led.off()
                 return "abort"
             time.sleep_ms(2)
             
@@ -90,6 +88,7 @@ def measure(sensor, encoder):
         if encoder.fifo.has_data(): # # exit from the loop in the menu
             preasured = encoder.fifo.get()
             if preasured == 0:
+                led.off()
                 return "abort"
         time.sleep_ms(2)
         
@@ -104,6 +103,7 @@ def measure(sensor, encoder):
         if encoder.fifo.has_data(): # exit from the loop in the menu
             preasured = encoder.fifo.get()
             if preasured == 0:
+                led.off()
                 return "abort"
 
         if printed == False:
@@ -136,6 +136,7 @@ def measure(sensor, encoder):
         if encoder.fifo.has_data(): # exit from the loop in the menu
             preasured = encoder.fifo.get()
             if preasured == 0:
+                led.off()
                 return "abort"
 
         if printed == False:
