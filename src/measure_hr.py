@@ -163,7 +163,8 @@ def measure(sensor, encoder):
                 intervals = []
                 for i in range(len(peaks) - 1):
                     interval = peaks[i + 1][1] - peaks[i][1]  # recalculating intervals for new peaks
-                    if 120 <= interval <= 250:  # min possible bpm ís 60, max is 125
+                    if 63 <= interval <= 500: # 240-30bpm allowed
+
                         intervals.append(interval)
 
                 if intervals:

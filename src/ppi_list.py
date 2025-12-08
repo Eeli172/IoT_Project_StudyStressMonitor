@@ -75,7 +75,7 @@ def measure():
                             if len(peaks) >= 2:
                                 interval = peaks[-1][1] - peaks[-2][1] # is selected index in peaks list and its difference
                                 
-                                if 75 <= interval <= 500: # 200-30bpm allowed
+                                if 63 <= interval <= 500: # 240-30bpm allowed
 
                                     # allowed jump - if last interval and current interval isn't too far from each other -> True 
                                     allowed_jump = last_interval*(1+max_jump_pct) >= interval and last_interval*(1-max_jump_pct) <= interval
