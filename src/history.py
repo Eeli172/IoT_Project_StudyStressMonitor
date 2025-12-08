@@ -50,8 +50,8 @@ class History:
             with open(self.file, "r") as f:
                 self.sessions = ujson.load(f)   # get the data from the file
                 print("LOADED SESSION")
-        except (OSError, ValueError):           # file doesn’t exist or is empty/corrupt
-            print("SESSION LOADING FAILED ")
+        except (ValueError):                    # file is empty
+            print("History was empty".upper())
             self.sessions = []
 
 
