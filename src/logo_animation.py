@@ -453,11 +453,6 @@ class LogoAnimation:
                 self.show_next()
                 time.sleep_ms(self.delay)
 
-
-logo = LogoAnimation(delay=80)
-logo.run()
-       
-       
        
        
        
