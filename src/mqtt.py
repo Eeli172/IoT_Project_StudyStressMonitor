@@ -1,5 +1,5 @@
 from umqtt.simple import MQTTClient
-from config import config, Wlan
+from config import config
 import json
 
 

@@ -1,11 +1,5 @@
-from machine import Pin, I2C, ADC
-from ssd1306 import SSD1306_I2C
-from piotimer import Piotimer
-from fifo import Fifo
-from config import config
-import hardware
+from machine import Pin
 import time
-import micropython
 import view
 
 
@@ -49,16 +43,13 @@ def measure(sensor, encoder):
     led = Pin(21, Pin.OUT)
     led_off_time = None
     
-    all_data = []
 
     SF = 250  # frequency
-    MAX_PEAKS = 20  # max number of peaks in the list
     peaks = []
     first_signal = []
     last_peak_index = None
     index = 0
     data_previous = None
-    data_current = 0
     slope_previous = None
     slope = 0
     printed = False

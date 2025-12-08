@@ -1,7 +1,6 @@
 from config import config
 from history import History
 from mqtt import Mqtt
-import time
 from hardware import Encoder
 from view import display_center, display_left
 from ppi_list import measure
