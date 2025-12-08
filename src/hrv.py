@@ -84,7 +84,7 @@ class Hrv:
         display_center(["TO START HRV-", "MEASUREMENT", "", "1. PLACE THUMB", "ON SENSOR", "2. PRESS BUTTON"])
         button_pressed = False
         
-        while not button_pressed: 
+        while not button_pressed: # wait until user is ready to start the measurement
             if self.encoder.fifo.has_data():
                 if self.encoder.fifo.get() == 0:
                     button_pressed = True
@@ -117,7 +117,9 @@ class Hrv:
             'SDNN:' + str(int(self.payload["sdnn"]))
         ])
 
-        self.history.add_session(self.payload)
+        self.history.add_session(self.payload) # push data to history.json
+
+
 
         # drain fifo and return to menu when button pressed
         while self.encoder.fifo.has_data():
@@ -125,7 +127,7 @@ class Hrv:
 
         button_pressed = False
 
-        while not button_pressed:
+        while not button_pressed: # show data on oled until button pressed and return to menu
             if self.encoder.fifo.has_data():
                 while self.encoder.fifo.has_data():
                     if self.encoder.fifo.get() == 0:

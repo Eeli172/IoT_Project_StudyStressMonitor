@@ -56,13 +56,13 @@ class Wlan: # wlan class
         
 
     def format_time(self, timestamp):
-        t = time.localtime(timestamp)
+        t = time.localtime(timestamp) # timestamp 
     
         long = "{:02d}.{:02d}.{:04d} {:02d}.{:02d}".format(
-            t[2], t[1], t[0], t[3], t[4]
+            t[2], t[1], t[0], t[3], t[4]                #  long format of date - dd.mm.yyyy hh.mm
         )
         
-        short = "{:02d}.{:02d}. {:02d}.{:02d}".format(
+        short = "{:02d}.{:02d}. {:02d}.{:02d}".format(  # short format of date - dd.mm. hh.mm
             t[2], t[1], t[3], t[4]
         )
         
