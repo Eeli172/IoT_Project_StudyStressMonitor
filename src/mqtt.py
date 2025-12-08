@@ -36,16 +36,14 @@ class Mqtt:
 
     def add_device(self): # add device to the broker's database by mac if it is not found already
 
-        mqtt_payload = ( # create the payload 
-            '{'
-                '"mac": "' + self.wlan.mac + '",' 
-                '"device_name": "' + self.wlan.mac + ' pico"'
-            '}'
-        )
-
+        mqtt_payload = {
+            "mac": self.wlan.mac,
+            "device_name": f"{self.wlan.mac} pico"
+        }
+        payload_dump = json.dumps(mqtt_payload)
 
         try: # try to send the payload to broker by mqtt 
-            self.client.publish(b'database/devices/add', mqtt_payload)
+            self.client.publish(b'database/devices/add', payload_dump)
 
         except Exception as e: # in case of error plot on oled and print on terminal
             print("Failed to send request:".upper(), e)
@@ -58,24 +56,23 @@ class Mqtt:
 
     def add_patient(self):
         self.patient_list()
-        name = "Eeli"
+        patient_name = "Test"
         id = 0
         found = False
         for i in self.received_values["msg"]["data"]:
-            if i["Name"] == name:
+            if i["Name"] == patient_name:
                 found = True
                 id = i["ID"]
         
         if not found:
-            mqtt_payload = ( # create the payload 
-                '{'
-                    '"mac": "' + self.wlan.mac + '",' 
-                    '"patient_name": "' + name + '"'
-                '}'
-            )
+            mqtt_payload = {
+                    "mac": self.wlan.mac,
+                    "patient_name": patient_name
+            }
+            payload_dump = json.dumps(mqtt_payload)
 
             try: # try to send the payload to broker by mqtt 
-                self.client.publish(b'database/patients/add', mqtt_payload)
+                self.client.publish(b'database/patients/add', payload_dump)
 
             except Exception as e: # in case of error plot on oled and print on terminal
                 print("Failed to send request:".upper(), e)
@@ -92,14 +89,13 @@ class Mqtt:
             return id
 
     def patient_list(self):
-        mqtt_payload = ( # create the payload 
-            '{'
-                '"mac": "' + self.wlan.mac + '"' 
-            '}'
-        )
+        mqtt_payload = {
+            "mac": self.wlan.mac 
+        }
+        payload_dump = json.dumps(mqtt_payload)
 
         try: # try to send the payload to broker by mqtt 
-            self.client.publish(b'database/patients/list', mqtt_payload)
+            self.client.publish(b'database/patients/list', payload_dump)
 
         except Exception as e: # in case of error plot on oled and print on terminal
             print("Failed to send request:".upper(), e)
@@ -115,14 +111,13 @@ class Mqtt:
         # payload to send to broker
         if self.mode == "kubios": # payload if it's for kubios analysis
 
-            payload_dump = (
-                '{'
-                '"mac": "' + self.wlan.mac + '",'
-                '"type": "RRI",'
-                '"data": ' + json.dumps(data) + ','
-                '"analysis": { "type": "readiness" }'
-                '}'
-            )
+            mqtt_payload = {
+                "mac": self.wlan.mac,
+                "type": "RRI",
+                "data": data,
+                "analysis": { "type": "readiness" }
+            }
+            
 
         elif self.mode == "hrv": # payload if it's for saving hrv measurements
             self.add_device()
@@ -138,7 +133,7 @@ class Mqtt:
                 "patient_id": _id
             }
 
-            payload_dump = json.dumps(mqtt_payload)
+        payload_dump = json.dumps(mqtt_payload)
 
         
         return payload_dump
