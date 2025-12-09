@@ -69,6 +69,10 @@ class Encoder:
         self.last_press = now
         
         self.fifo.put(0)
+    
+    def drain_fifo(self):
+        while self.fifo.has_data():
+            self.fifo.get()
 
 
 
