@@ -6,7 +6,7 @@ from hardware import Encoder
 import time
 
 class Kubios:
-    def __init__(self, wlan):
+    def __init__(self, wlan, encoder):
         self.ppi_list  = []                             # placeholder for ppi_data
         self.mode = "kubios"                            # mode for mqtt instance
         self.wlan = wlan                                # wlan instance
@@ -14,23 +14,26 @@ class Kubios:
         self.topic_pub = config["broker"]["kubios_pub"] # publish topic - (config.json)
         self.topic_sub = config["broker"]["kubios_sub"] # subscribe topic (config.json)
         self.success = 2                                # helper for handling errors (0=allGood;continueProgram, 1=Failed;returnToMenu, 2=Failed;keepTrying)
+        self.encoder = encoder                          # encoder instance
 
 
 
     def get_data(self): # gather ppi -data
-        # self.ppi_list = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
-        self.ppi_list = measure() # measure hr and get list of ppi -values
+        self.ppi_list = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
+        # self.ppi_list = measure() # measure hr and get list of ppi -values
 
 
     def run(self):
+        # drain fifo
+        self.encoder.drain_fifo()
+            
         # plot on oled AND wait until button is pressed
         display_center(["TO START KUBIOS-", "ANALYSIS", "", "1. PLACE THUMB", "ON SENSOR", "2. PRESS BUTTON"])
-        encoder = Encoder()         # encoder instance
         button_pressed = False      # helper to tell if user pressed the button or not
         
         while not button_pressed:   # wait for user to be ready to start the measurement
-            if encoder.fifo.has_data():
-                if encoder.fifo.get() == 0:
+            if self.encoder.fifo.has_data():
+                if self.encoder.fifo.get() == 0:
                     button_pressed = True
 
 
@@ -58,14 +61,13 @@ class Kubios:
                 print("Failed to run mqtt:".upper(), e)
                 display_center(("CONNECTION ERROR", "", "press button to", "retry  OR  wait", "5 sec to return", "to main menu"))
 
-                while encoder.fifo.has_data(): # drain fifo
-                    encoder.fifo.get()
-
+                # drain fifo
+                self.encoder.drain_fifo()
                 # wait 5 seconds to return to main menu - retry if the button is pressed
                 time_beginning = time.ticks_ms()
                 while time.ticks_diff(time.ticks_ms(), time_beginning) < 5000 and not btn: # wait 5 seconds
-                    if encoder.fifo.has_data():
-                        if encoder.fifo.get() == 0: # button is pressed
+                    if self.encoder.fifo.has_data():
+                        if self.encoder.fifo.get() == 0: # button is pressed
                             btn = 1 # continue from the beginning of the loop
 
                 if btn: 
@@ -76,10 +78,8 @@ class Kubios:
                     self.success = 1 # exit loop -> return main menu
                 
 
-        # drain fifo                
-        while encoder.fifo.has_data():
-            encoder.fifo.get()
-
+        # drain fifo
+        self.encoder.drain_fifo()
         if not self.success:
             # plot the results on oled
             display_left([
@@ -96,9 +96,9 @@ class Kubios:
             button_pressed = False
 
             while not button_pressed: # show data on oled until button is pressed and program returns to main menu
-                if encoder.fifo.has_data():
-                    while encoder.fifo.has_data():
-                        if encoder.fifo.get() == 0:
+                if self.encoder.fifo.has_data():
+                    while self.encoder.fifo.has_data():
+                        if self.encoder.fifo.get() == 0:
                             button_pressed = True
 
 

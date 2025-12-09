@@ -48,9 +48,6 @@ class App:
         # Menu items
         self.menu = Menu()
 
-        # history
-        self.history = History(self.encoder)
-        
         # measuring
         self.measure_hr = Measure_hr(self.menu, self.encoder, self.sensor)
         
@@ -93,15 +90,15 @@ class App:
                                                                 
 
                     elif self.menu.pos == 1: # BASIC HRV ############################
-                        Hrv(self.wlan).run()
+                        Hrv(self.wlan, self.encoder).run()
 
 
                     elif self.menu.pos == 2: # KUBIOS ############################
-                        Kubios(self.wlan).run()
+                        Kubios(self.wlan, self.encoder).run()
                             
 
                     elif self.menu.pos == 3: # HISTORY ############################
-                        self.history.run()
+                        History(self.encoder).run()
 
 
                     while not self.encoder.button.value(): # drain fifo before returning to menu

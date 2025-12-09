@@ -8,7 +8,7 @@ from ppi_list import measure
 
 
 class Hrv:
-    def __init__(self, wlan):
+    def __init__(self, wlan, encoder):
         self.ppi = []               # placeholder
         self.payload = {
             "mean_ppi": None,       # mean PPI (ms)
@@ -18,7 +18,7 @@ class Hrv:
         }
         self.wlan = wlan
         self.mqtt = Mqtt(self.wlan, "hrv")     # define mqtt instance
-        self.encoder = Encoder()
+        self.encoder = encoder
         self.history = History(self.encoder)
 
         self.topic_pub = config["broker"]["add_record"]     # publish topic - (config.json)
@@ -27,8 +27,8 @@ class Hrv:
 
 
     def get_data(self): 
-        # self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
-        self.ppi = measure()                    # gather ppi -data
+        self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
+        # self.ppi = measure()                    # gather ppi -data
 
 
 
@@ -79,8 +79,12 @@ class Hrv:
 
 
     def run(self):
+        # drain fifo
+        self.encoder.drain_fifo()
+            
         # plot on oled AND wait until button is pressed
         display_center(["TO START HRV-", "MEASUREMENT", "", "1. PLACE THUMB", "ON SENSOR", "2. PRESS BUTTON"])
+        
         button_pressed = False
         
         while not button_pressed: # wait until user is ready to start the measurement
@@ -120,10 +124,9 @@ class Hrv:
 
 
 
-        # drain fifo and return to menu when button pressed
-        while self.encoder.fifo.has_data():
-            self.encoder.fifo.get()
 
+        # drain fifo and return to menu when button pressed
+        self.encoder.drain_fifo()
         button_pressed = False
 
         while not button_pressed: # show data on oled until button pressed and return to menu
