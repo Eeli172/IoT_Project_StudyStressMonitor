@@ -2,7 +2,6 @@ from mqtt import Mqtt
 from config import config
 from ppi_list import measure
 from view import display_left, display_center
-from hardware import Encoder
 import time
 
 class Kubios:
