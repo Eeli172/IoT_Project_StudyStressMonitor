@@ -13,8 +13,6 @@
     ["measure_hr.py", "http://localhost:8000/src/measure_hr.py"],
     ["history.py", "http://localhost:8000/src/history.py"],
     ["history.json", "http://localhost:8000/src/history.json"],
-    ["heart_test.py", "http://localhost:8000/src/heart_test.py"],
-    ["heartbeat_animation.py", "http://localhost:8000/src/heartbeat_animation.py"],
     ["logo_animation.py", "http://localhost:8000/src/logo_animation.py"],
 
 
