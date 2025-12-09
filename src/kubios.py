@@ -18,8 +18,10 @@ class Kubios:
 
 
     def get_data(self): # gather ppi -data
-        self.ppi_list = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
-        # self.ppi_list = measure() # measure hr and get list of ppi -values
+        # self.ppi_list = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
+        self.ppi_list = measure(self.encoder.stopper)   # measure hr and get list of ppi -values
+
+
 
 
     def run(self):
@@ -33,27 +35,55 @@ class Kubios:
         while not button_pressed:   # wait for user to be ready to start the measurement
             if self.encoder.fifo.has_data():
                 if self.encoder.fifo.get() == 0:
+                    while self.encoder.button.value() == 0:
+                        pass
                     button_pressed = True
+                    self.encoder.drain_fifo()
+
+        self.encoder.stopper.in_function = True # set encoder button irq to stop the function when button is pressed - to return to menu
 
 
         # plot on oled AND get ppi data
         display_center(["Collecting", " data.."])
         self.get_data()
 
+        if self.encoder.stopper.stop: # button pressed - return to menu
+            display_center(["ABORTED", "", "Returning", " to menu.."])
+            time.sleep_ms(800)
+            return
+
+
+
 
         # plot on oled 
         display_center(["Sending data.."])
 
         # connect to wlan
-        self.wlan.connect()
+        self.wlan.connect(self.encoder.stopper)
+
+        if self.encoder.stopper.stop: # button pressed - return to menu
+            display_center(["ABORTED", "", "Returning", " to menu.."])
+            time.sleep_ms(800)
+            return
 
 
         # plot on oled AND send data to broker AND wait for the results to be returned
         while self.success == 2:
+            if self.encoder.stopper.stop: # button pressed - return to menu
+                display_center(["ABORTED", "", "Returning", " to menu.."])
+                time.sleep_ms(800)
+                return
+
             display_center(["Sending data.."])
             btn = 0 # helper for button press in case of exception
             try:
-                result = self.mqtt.run(self.topic_pub, self.topic_sub, self.ppi_list)
+                result = self.mqtt.run(self.topic_pub, self.topic_sub, self.ppi_list, self.encoder.stopper)
+
+                if self.encoder.stopper.stop: # button pressed - return to menu
+                    display_center(["ABORTED", "", "Returning", " to menu.."])
+                    time.sleep_ms(800)
+                    return
+
                 self.success = 0 # program ran succesfully
 
             except Exception as e: # failed to run program
@@ -89,7 +119,9 @@ class Kubios:
                 f"SNS: {result["msg"]["data"]["analysis"]["sns_index"]:.3f}", 
                 f"PNS: {result["msg"]["data"]["analysis"]["pns_index"]:.3f}"
             ])
-
+        
+        
+            self.encoder.stopper.in_function = False # set encoder button irq to act as normal button press
 
             # return to menu when button is pressed
             button_pressed = False

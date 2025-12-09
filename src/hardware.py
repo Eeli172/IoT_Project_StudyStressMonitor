@@ -2,7 +2,7 @@ from machine import Pin, I2C, ADC
 from ssd1306 import SSD1306_I2C
 from piotimer import Piotimer
 from fifo import Fifo
-from config import config
+from config import config, Stopper
 import time
 import micropython
 
@@ -55,6 +55,9 @@ class Encoder:
         self.a.irq(handler=self.handler, trigger=Pin.IRQ_RISING, hard=True)
         self.button.irq(handler=self._button_handler, trigger=Pin.IRQ_FALLING, hard=True)
 
+        self.stopper = Stopper() # stopper class to hold stop flag and button irq state
+
+
     def handler(self, pin):
         if self.b():                 # If B == 1
             self.fifo.put(-1)        # One direction
@@ -65,15 +68,16 @@ class Encoder:
         now = time.ticks_ms()
         if time.ticks_diff(now, self.last_press) < 150:
             return  # debounce
-
         self.last_press = now
         
-        self.fifo.put(0)
+        if self.stopper.in_function:    # this is true in hrv.run() and kubios.run() 
+            self.stopper.stop = True
+        else:                           # default action
+            self.fifo.put(0)
     
     def drain_fifo(self):
         while self.fifo.has_data():
             self.fifo.get()
-
 
 
 

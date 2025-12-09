@@ -11,6 +11,7 @@ class Mqtt:
         self.received_values = {"topic": None, "msg": None} # placeholder for message to be received later from mqtt broker
         self.wlan = wlan            # wlan instance
         self.client = None          # placeholder for mqtt client
+        self.stopper = None         # placeholder for stopper instance
 
 
 
@@ -35,6 +36,9 @@ class Mqtt:
 
 
     def add_device(self): # add device to the broker's database by mac if it is not found already
+        if self.stopper.stop: # button pressed - return to menu
+            self.client.disconnect()
+            return
 
         mqtt_payload = {
             "mac": self.wlan.mac,
@@ -55,7 +59,12 @@ class Mqtt:
 
 
     def add_patient(self):
-        self.patient_list()
+        self.patient_list() # get patient list
+
+        if self.stopper.stop: # button pressed - return to menu
+            self.client.disconnect()
+            return
+
         patient_name = "Test"
         id = 0
         found = False
@@ -89,6 +98,10 @@ class Mqtt:
             return id
 
     def patient_list(self):
+        if self.stopper.stop: # button pressed - return to menu
+            self.client.disconnect()
+            return
+
         mqtt_payload = {
             "mac": self.wlan.mac 
         }
@@ -147,6 +160,10 @@ class Mqtt:
         correct_response = False # was the recently received response meant for us?  -  False = no
 
         while not correct_response:
+            if self.stopper.stop: # button pressed - return to menu
+                self.client.disconnect()
+                return
+
             try:
                 if not received:
                     self.client.wait_msg()   # This will block until a message arrives - triggers callback
@@ -166,9 +183,10 @@ class Mqtt:
 
 
 
-    def run(self, topic_pub, topic_sub, data):
+    def run(self, topic_pub, topic_sub, data, stopper):
         # reset previous values when running again
         self.received_values = {"topic": None, "msg": None}
+        self.stopper = stopper
 
 
         # try to connect to mqtt broker
@@ -178,6 +196,9 @@ class Mqtt:
             print("Exception while connexting to kubios proxy: ".upper(), e)
             raise Exception("Failed connecting to mqtt broker")
 
+        if self.stopper.stop: # button pressed - return to menu
+            self.client.disconnect()
+            return
 
         # subscribe to response topic
         self.client.subscribe(topic_sub)
@@ -185,6 +206,10 @@ class Mqtt:
         # payload to send to broker
         mqtt_payload = self.payload(data)
         
+        if self.stopper.stop: # button pressed - return to menu
+            self.client.disconnect()
+            return
+
         # try to publish the request
         try:
             self.client.publish(topic_pub, mqtt_payload)
@@ -192,9 +217,17 @@ class Mqtt:
             print("Failed to send request:".upper(), e)
             raise Exception("Failed publishing the request")
 
+        if self.stopper.stop: # button pressed - return to menu
+            self.client.disconnect()
+            return
+
 
         # wait for response and confirm it is for us before continuing
         self.check_response()
+        if self.stopper.stop:
+            self.client.disconnect()
+            return
+
         # disconnect mqtt client
         self.client.disconnect()
 

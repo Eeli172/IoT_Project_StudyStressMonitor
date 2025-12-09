@@ -12,6 +12,11 @@ def load_config(): # get config from config.json
 config = load_config() # config to import
 
 
+class Stopper: # stopper class to hold stop flag
+    def __init__(self):
+        self.stop = False        # flag to stop function execution with
+        self.in_function = False # tells irq what to do
+
 
 class Wlan: # wlan class
     def __init__(self):
@@ -23,12 +28,13 @@ class Wlan: # wlan class
         self.timestamp = None
 
 
-    def connect(self): # method to connect to wlan
+    def connect(self, stopper): # method to connect to wlan
         print("Connecting to WiFi...")
         try:
             self.connection.connect(self.ssid, self.password) # start connection to router
             while not self.connection.isconnected(): # wait until connection is up
-                pass
+                if stopper.stop: # abort if stop flag is true
+                    return
             
         except Exception as e: # in case something goes wrong
             print("exception occurred while connecting to wlan:".upper(), e)

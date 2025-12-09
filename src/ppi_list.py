@@ -4,7 +4,7 @@ from hardware import Sensor
 
 micropython.alloc_emergency_exception_buf(200)
             
-def measure():
+def measure(stopper):
     sensor = Sensor() 
     sensor.start() # start gathering data into fifo
     
@@ -22,6 +22,10 @@ def measure():
 
     printed = False
     while True:
+        if stopper.stop: # button pressed - return to menu
+            sensor.stop()
+            return
+        
         if printed == False:
             print("Signal stabilization...")
             printed = True
@@ -33,12 +37,20 @@ def measure():
          
     calibration = time.ticks_ms()
     while time.ticks_diff(time.ticks_ms(), calibration) < 3000: # waiting another 3 seconds for a steady signal
+        if stopper.stop: # button pressed - return to menu
+            sensor.stop()
+            return
+
         if sensor.fifo.has_data():
             sensor.fifo.get()
             
           
     calibration_start = time.ticks_ms()
     while time.ticks_diff(time.ticks_ms(), calibration_start) < 3000: # data is collected to calculate THRESHOLD
+        if stopper.stop: # button pressed - return to menu
+            sensor.stop()
+            return
+
         if printed == False:
             print("Collecting data..")
             printed = True
@@ -56,6 +68,10 @@ def measure():
     
     measure_time = time.ticks_ms()
     while time.ticks_diff(time.ticks_ms(), measure_time) < 30000 or len(ppi_list) < kubios_min_length: # 30000 = 30 sekuntia
+        if stopper.stop: # button pressed - return to menu
+            sensor.stop()
+            return
+
         if printed == False:
             print("Looking for peaks...")
             printed = True

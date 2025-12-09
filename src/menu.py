@@ -65,6 +65,7 @@ class App:
                 self.menu.change = False
                 self.encoder = hardware.Encoder()
                 self.measure_hr.encoder = self.encoder
+                self.encoder.stopper.in_function = False # return encoder button functionality back to normal
             
             
             if self.encoder.fifo.has_data(): # button pressed OR encoder turned

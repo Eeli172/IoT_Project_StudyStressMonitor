@@ -3,6 +3,7 @@ from history import History
 from mqtt import Mqtt
 from view import display_center, display_left
 from ppi_list import measure
+import time
 
 
 
@@ -21,18 +22,20 @@ class Hrv:
         self.history = History(self.encoder)
 
         self.topic_pub = config["broker"]["add_record"]     # publish topic - (config.json)
-        self.topic_sub = config["broker"]["db_response"] # subscribe topic (config.json)
+        self.topic_sub = config["broker"]["db_response"]    # subscribe topic (config.json)
 
 
 
     def get_data(self): 
-        self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
-        # self.ppi = measure()                    # gather ppi -data
+        # self.ppi = [1036, 1020, 1008, 952, 996, 1012, 1080, 1004, 940, 960, 980, 1004, 982, 980, 988, 982, 1012, 968, 944, 996, 988, 980, 928, 956, 972, 1004, 988, 888, 900, 956]                    # gather ppi -data
+        self.ppi = measure(self.encoder.stopper)            # gather ppi -data
 
 
 
     def calc_hrv(self):
         self.get_data() # get ppi data for hrv calculations
+        if self.encoder.stopper.stop: # button pressed - return to menu
+            return
 
         ####################### MEAN PPI #####################
         self.payload["mean_ppi"] = sum(self.ppi) / len(self.ppi) # calculate mean ppi
@@ -86,29 +89,49 @@ class Hrv:
         
         button_pressed = False
         
-        while not button_pressed: # wait until user is ready to start the measurement
+        while not button_pressed:   # wait for user to be ready to start the measurement
             if self.encoder.fifo.has_data():
                 if self.encoder.fifo.get() == 0:
+                    while self.encoder.button.value() == 0:
+                        pass
                     button_pressed = True
+                    self.encoder.drain_fifo()
+
+        self.encoder.stopper.in_function = True # set encoder button irq to stop the function when button is pressed - to return to menu
 
 
         # plot on oled AND get hrv data
         display_center(["Collecting", " data.."])
         self.calc_hrv()
+        if self.encoder.stopper.stop:  # button pressed - return to menu
+            display_center(["ABORTED", "", "Returning", " to menu.."])
+            time.sleep_ms(800)
+            return
 
 
         # plot on oled 
         display_center(["Sending data.."])
 
         # connect to wlan
-        self.wlan.connect()
+        self.wlan.connect(self.encoder.stopper)
+        
+        if self.encoder.stopper.stop:  # button pressed - return to menu
+            display_center(["ABORTED", "", "Returning", " to menu.."])
+            time.sleep_ms(800)
+            return
+
 
         # get timestamp 
         self.wlan.get_time()
         self.payload["timestamp_long"], self.payload["timestamp_short"] = self.wlan.format_time(self.wlan.timestamp) 
 
         # send data to broker
-        self.result = self.mqtt.run(self.topic_pub, self.topic_sub, self.payload)
+        self.result = self.mqtt.run(self.topic_pub, self.topic_sub, self.payload, self.encoder.stopper)
+        
+        if self.encoder.stopper.stop:  # button pressed - return to menu
+            display_center(["ABORTED", "", "Returning", " to menu.."])
+            time.sleep_ms(800)
+            return
 
 
         # plot calculations on oled
@@ -122,6 +145,8 @@ class Hrv:
         self.history.add_session(self.payload) # push data to history.json
 
 
+        self.encoder.stopper.in_function = False # set encoder button irq to act as normal button press
+
 
 
         # drain fifo and return to menu when button pressed
@@ -129,10 +154,9 @@ class Hrv:
         button_pressed = False
 
         while not button_pressed: # show data on oled until button pressed and return to menu
-            if self.encoder.fifo.has_data():
-                while self.encoder.fifo.has_data():
-                    if self.encoder.fifo.get() == 0:
-                        button_pressed = True
+            while self.encoder.fifo.has_data():
+                if self.encoder.fifo.get() == 0:
+                    button_pressed = True
 
 
 
