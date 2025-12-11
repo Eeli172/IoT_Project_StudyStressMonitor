@@ -1,4 +1,4 @@
-# HeartRateMonitor
+# Study Stress Monitor
 
 
 1) What you need
